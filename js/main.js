@@ -7,7 +7,7 @@ var satellite = new Body(10000, 0, -300);
 
 var i = 0;
 
-while (i++ < 600) {
+while (i++ < 500) {
     var angle = Math.random() * PI * 2;
     var satellite = new Body(500, 0, 500);
     satellite.setRadialCoordinate(angle);
