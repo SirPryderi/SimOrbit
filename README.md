@@ -4,8 +4,8 @@
 Hello! This project aims to create a space physics simulation running in your browser.
 More likely it will just cause some lags, but that's the best part of an alpha project, isn't it?
 Right now there are to main pages:
-0. index, that will allow you to drive a little red particle in the void of space.
-0. cosmos, that feature multiplanetary simulation. The two will be eventually merged so that you can move from one planet to another.
+* index, that will allow you to drive a little red particle in the void of space.
+* cosmos, that feature multiplanetary simulation. The two will be eventually merged so that you can move from one planet to another.
 
 # Controls
 You can take off that red particle using ```[spacebar]```. Use the arrows to apply impulses and alter the particle trajectory.
