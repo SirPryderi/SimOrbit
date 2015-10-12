@@ -19,8 +19,6 @@ while (i++ < 500) {
     placeObject(satellite);
 }
 
-
-
 body1.setRadialCoordinate(Math.PI * 2);
 
 body1.focus(0);
