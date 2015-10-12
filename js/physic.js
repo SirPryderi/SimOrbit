@@ -1,4 +1,5 @@
 //"Nel frattempo non disperi. La natura della massa ha sempre qualcosa di oscuro per tutti."
+//"Do not despair. The nature of the mass itself has always something obscure for everyone." 
 
 var earth_radius = 234; // RADIUS OF THE EARTH
 var earth_mass = 18E14; //18E14; // MASS OF THE EARTH 18E
@@ -140,93 +141,6 @@ function getEccentricAnomalyNewtonMethod(ec, m, dp) {
 
     return E;
 
-}
-
-function getEccentricAnomalyNewtonMethod1(e, M, iterations, debuge) {
-    var E = M;
-    /*
-    for (var i = 0; i < iterations; i++) {
-        var tosum = (M + e * sin(E) - E) / (1 - e * cos(E));        
-        E = E + tosum;
-    }
-    */
-
-    var tosum = 0,
-        iteration = 0;
-
-    while (true) {
-        /*tosum = (M + e * sin(E) - E) / (1 - e * cos(E));
-        E = E + tosum;
-        */
-
-        tosum = e * sin(E);
-
-        E = M + tosum;
-
-
-        if (Math.abs(tosum) < 0.1) {
-            break;
-        }
-
-
-        if (iteration == 10) {
-            console.error(tosum);
-            break;
-        }
-
-        iteration++;
-
-    }
-
-
-
-    //console.warn(tosum);
-
-
-    return E;
-}
-
-function getEccentricAnomalyNewtonMethodDebug(e, M, iterations, debuge) {
-    var E = 0;
-    /*
-    for (var i = 0; i < iterations; i++) {
-        var tosum = (M + e * sin(E) - E) / (1 - e * cos(E));        
-        E = E + tosum;
-    }
-    */
-
-    var tosum = 0,
-        previous_sum = 0;
-
-    while (true) {
-        /*tosum = (M + e * sin(E) - E) / (1 - e * cos(E));
-        E = E + tosum;
-        */
-
-        tosum = e * sin(E);
-        E = M + tosum;
-
-        console.info(tosum);
-
-        if (Math.abs(tosum) < 0.00005) {
-            break;
-        }
-
-
-        previous_sum++;
-        if (previous_sum == 2000) {
-            debug();
-            console.error(tosum);
-            break;
-        }
-    }
-
-
-
-    //console.warn(tosum);
-
-
-    return E;
 }
 
 function getTrueAnomalyFromEccentricAnomaly(e, E) {
