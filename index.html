@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link href="css/style.css" rel="stylesheet" type="text/css">
+    <title>Space Sim</title>
+</head>
+
+<body>
+    <section id="first">
+        <canvas id="playbox"></canvas>
+        <toolbar>
+            <button onclick="moveNow()">Take Off</button>
+            <!--<button onclick="benchMarkStart()">Benchmark</button>
+            <button onclick="absoluteObjects[0].applyImpulse(1, 0)">Apply Force</button>
+            <button onclick="getGeostationaryOrbit()">Get Geostationary Orbit</button>-->
+            <button onclick="toggleFVV(this);" id="FVV" title="Toggle Follow Velocity Vector">Toggle FVV</button>
+            <button onclick="toggleSOPS();" id="SOPS" title="Toggle Space Object Positioning System">Toggle SOPS</button>
+            <button onclick="$('avionics').toggle();" title="Toggle lower HUD">Toggle DATA</button>
+            <input type="range" min="0" max="50" value="15" id="launchVelocity" onchange="launchVelocity = this.value" />
+        </toolbar>
+
+        <avionics>
+            <orbital>
+                <table>
+                    <tr>
+                        <td>Periapsis</td>
+                        <td id="periapsis"></td>
+                        <td class="unit">m</td>
+                    </tr>
+
+                    <tr>
+                        <td>Apoapsis</td>
+                        <td id="apoapsis"></td>
+                        <td class="unit">m</td>
+                    </tr>
+
+                    <tr>
+                        <td>Eccentricity</td>
+                        <td id="eccentricity"></td>
+                        <td class="unit"></td>
+                    </tr>
+
+
+                    <tr>
+                        <td>Semi-Major Axis</td>
+                        <td id="semimajoraxis"></td>
+                        <td class="unit">m</td>
+                    </tr>
+                    <tr>
+                        <td>Semi-Minor Axis</td>
+                        <td id="semiminoraxis"></td>
+                        <td class="unit">m</td>
+                    </tr>
+
+                    <tr>
+                        <td>Circular Orbit @</td>
+                        <td id="circularOrbitVelocity"></td>
+                        <td class="unit">m/s</td>
+                    </tr>
+
+                    <tr>
+                        <td>Orbital Period</td>
+                        <td id="orbitalPeriod"></td>
+                        <td class="unit">s</td>
+                    </tr>
+                </table>
+            </orbital>
+
+            <table>
+                <tr>
+
+                    <td>GForce</td>
+                    <td id="gforce"></td>
+                    <td class="unit">G</td>
+
+                    <td>Velocity</td>
+                    <td id="speed"></td>
+                    <td class="unit">m/s</td>
+
+                    <td>Vertical Speed</td>
+                    <td id="verticalSpeed"></td>
+                    <td class="unit">m/s</td>
+                </tr>
+                <tr>
+
+                    <td>Acceleration</td>
+                    <td id="acceleration"></td>
+                    <td class="unit">m/s<sup>2</sup></td>
+
+                    <td>Velocity Vector</td>
+                    <td id="velocityVector"></td>
+                    <td class="unit">&deg;</td>
+
+                    <td>Altutide</td>
+                    <td id="altitude"></td>
+                    <td class="unit">m</td>
+                </tr>
+                <tr>
+                    <td>Escape &Delta;V</td>
+                    <td id="escapedV"></td>
+                    <td class="unit">m/s</td>
+
+
+                    <td>Escape Velocity</td>
+                    <td id="escapeSpeed"></td>
+                    <td class="unit">m/s</td>
+                </tr>
+            </table>
+            </br>
+        </avionics>
+    </section>
+    <!--
+    <section>
+        <canvas id="canvas" width="800" height="800"></canvas>
+    </section>
+    -->
+    <script src="js/jquery.js"></script>
+    <script src="js/core.lib.js"></script>
+    <script src="js/draw.js"></script>
+    <script src="js/math.js"></script>
+    <script src="js/physic.js"></script>
+    <script src="js/engine.js"></script>
+    <script src="js/body.js"></script>
+    <script src="js/body.drawOrbit.js"></script>
+    <script src="js/avionix.js"></script>
+    <script src="js/joypad.js"></script>
+
+    <script src="js/spacecraft.js"></script>
+
+    <script src="js/main.js"></script>
+
+    <!--<script>
+        
+        
+        var sun = new Image();
+        var moon = new Image();
+        var earth = new Image();
+
+        function init() {
+            sun.src = 'https://mdn.mozillademos.org/files/1456/Canvas_sun.png';
+            moon.src = 'https://mdn.mozillademos.org/files/1443/Canvas_moon.png';
+            earth.src = 'https://mdn.mozillademos.org/files/1429/Canvas_earth.png';
+            window.requestAnimationFrame(draw);
+        }
+
+        function draw() {
+            var ctx = document.getElementById('canvas').getContext('2d');
+
+            ctx.globalCompositeOperation = 'destination-over';
+            ctx.clearRect(0, 0, 800, 800); // clear canvas
+
+            ctx.fillStyle = 'rgba(0,0,0,0.4)';
+            ctx.strokeStyle = 'rgba(0,153,255,0.4)';
+            ctx.save();
+            ctx.translate(400, 400);
+
+
+            // Earth
+            var time = new Date();
+            ctx.rotate(((2 * Math.PI) / 60) * time.getSeconds() + ((2 * Math.PI) / 60000) * time.getMilliseconds());
+            ctx.translate(350, 0);
+            ctx.fillRect(0, -12, 50, 24); // Shadow
+            ctx.drawImage(earth, -12, -12);
+
+            // Moon
+            ctx.save();
+            ctx.rotate(((2 * Math.PI) / 6) * time.getSeconds() + ((2 * Math.PI) / 6000) * time.getMilliseconds());
+            ctx.translate(0, 28.5);
+            ctx.drawImage(moon, -3.5, -3.5);
+            ctx.restore();
+
+            ctx.restore();
+
+            /*
+            ctx.beginPath();
+            ctx.arc(400, 400, 350, 0, Math.PI * 2, false); // Earth orbit
+            ctx.stroke();
+            */
+
+            /*ctx.drawImage(sun, 0, 0, 800, 800);*/
+            ctx.beginPath();
+            ctx.arc(400, 400, 150, 0, Math.PI * 2, false); // Earth orbit
+            ctx.fillStyle = 'rgba(255,252,225,0.8)';
+            ctx.fill();
+
+            var gradient = ctx.createRadialGradient(400, 400, 200, 400, 400, 0);
+            gradient.addColorStop(0, "rgba(255, 255, 255, 0)");
+            gradient.addColorStop(1, "rgba(255,252,225,1)");
+            //ctx.arc(400, 400, 500, 0, Math.PI * 2, false); // Earth orbit
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, 800, 800);
+
+            window.requestAnimationFrame(draw);
+        }
+
+        init();
+    </script>-->
+</body>
+
+</html>

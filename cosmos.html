@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link href="css/style.css" rel="stylesheet" type="text/css">
+    <title>Cosmos Sim</title>
+</head>
+
+<body>
+    <section id="first">
+        <canvas id="playbox"></canvas>
+        <toolbar>
+            <!--<button onclick="moveNow()">Take Off</button>
+            <button onclick="benchMarkStart()">Benchmark</button>
+            <button onclick="absoluteObjects[0].applyImpulse(1, 0)">Apply Force</button>
+            <button onclick="getGeostationaryOrbit()">Get Geostationary Orbit</button>
+            <button onclick="toggleFVV(this);" id="FVV" title="Toggle Follow Velocity Vector">Toggle FVV</button>
+            <button onclick="toggleSOPS();" id="SOPS" title="Toggle Space Object Positioning System">Toggle SOPS</button>
+            <button onclick="$('avionics').toggle();" title="Toggle lower HUD">Toggle DATA</button>
+            <button onclick="$('avionics').toggle();" title="Toggle lower HUD">Toggle DATA</button>
+            <input type="range" min="0" max="50" value="15" id="launchVelocity" onchange="launchVelocity = this.value"/>
+-->
+            <button onclick="debug()" title="Toggle lower HUD">DEINSETTA</button>
+        </toolbar>
+
+        <avionics>
+            <orbital>
+                <table>
+                    <tr>
+                        <td>Periapsis</td>
+                        <td id="periapsis"></td>
+                        <td class="unit">m</td>
+                    </tr>
+
+                    <tr>
+                        <td>Apoapsis</td>
+                        <td id="apoapsis"></td>
+                        <td class="unit">m</td>
+                    </tr>
+
+                    <tr>
+                        <td>Eccentricity</td>
+                        <td id="eccentricity"></td>
+                        <td class="unit"></td>
+                    </tr>
+
+
+                    <tr>
+                        <td>Semi-Major Axis</td>
+                        <td id="semimajoraxis"></td>
+                        <td class="unit">m</td>
+                    </tr>
+                    <tr>
+                        <td>Semi-Minor Axis</td>
+                        <td id="semiminoraxis"></td>
+                        <td class="unit">m</td>
+                    </tr>
+
+                    <tr>
+                        <td>Circular Orbit @</td>
+                        <td id="circularOrbitVelocity"></td>
+                        <td class="unit">m/s</td>
+                    </tr>
+
+                    <tr>
+                        <td>Orbital Period</td>
+                        <td id="orbitalPeriod"></td>
+                        <td class="unit">s</td>
+                    </tr>
+                </table>
+            </orbital>
+
+            <table>
+                <tr>
+
+                    <td>GForce</td>
+                    <td id="gforce"></td>
+                    <td class="unit">G</td>
+
+                    <td>Velocity</td>
+                    <td id="speed"></td>
+                    <td class="unit">m/s</td>
+
+                    <td>Vertical Speed</td>
+                    <td id="verticalSpeed"></td>
+                    <td class="unit">m/s</td>
+                </tr>
+                <tr>
+
+                    <td>Acceleration</td>
+                    <td id="acceleration"></td>
+                    <td class="unit">m/s<sup>2</sup></td>
+
+                    <td>Velocity Vector</td>
+                    <td id="velocityVector"></td>
+                    <td class="unit">&deg;</td>
+
+                    <td>Altutide</td>
+                    <td id="altitude"></td>
+                    <td class="unit">m</td>
+                </tr>
+                <tr>
+                    <td>Escape &Delta;V</td>
+                    <td id="escapedV"></td>
+                    <td class="unit">m/s</td>
+
+
+                    <td>Escape Velocity</td>
+                    <td id="escapeSpeed"></td>
+                    <td class="unit">m/s</td>
+                </tr>
+            </table>
+            </br>
+        </avionics>
+    </section>
+    <!--
+    <section>
+        <canvas id="canvas" width="800" height="800"></canvas>
+    </section>
+    -->
+    <script src="js/jquery.js"></script>
+    <script src="js/core.lib.js"></script>
+    <script src="js/draw.js"></script>
+    <script src="js/draw.cosmos.js"></script>
+    <script src="js/celestialObjects.js"></script>
+    <script src="js/math.js"></script>
+    <script src="js/physic.js"></script>
+    <script src="js/engine.js"></script>
+    <script src="js/body.js"></script>
+    <script src="js/body.drawOrbit.js"></script>
+    <script src="js/avionix.js"></script>
+    <script src="js/joypad.js"></script>
+
+    <script src="js/spacecraft.js"></script>
+
+
+    <!-- VIS GRAPH -->
+
+    <script src="js/vis/vis.min.js"></script>
+
+    <link href="js/vis/vis.min.css" rel="stylesheet" type="text/css">
+
+    <div id="myChart1" width="1100" height="400"></div>
+
+    <script>
+        //var window1 = window.open('chart.html', '1444377001866', 'width=700,height=500,toolbar=0,menubar=0,location=0,status=0,scrollbars=1,resizable=1,left=0,top=0');
+        var DELAY = 1000; // delay in ms to add new data points
+
+        var strategy = document.getElementById('myChart1');
+
+        // create a graph2d with an (currently empty) dataset
+        var container = document.getElementById('myChart1');
+        var dataset = new vis.DataSet();
+
+        var options = {
+            start: vis.moment().add(-30, 'seconds'), // changed so its faster
+            end: vis.moment(),
+            dataAxis: {
+                /*
+                sleft: {
+                    range: {
+                        min: -10,
+                        max: 10
+                    }
+                } */
+            },
+            drawPoints: {
+                style: 'circle' // square, circle
+            },
+            shaded: {
+                orientation: 'bottom' // top, bottom
+            }
+        };
+        var graph2d = new vis.Graph2d(container, dataset, options);
+
+        // a function to generate data points
+        function y(x) {
+            return (Math.sin(x / 2) + Math.cos(x / 4)) * 5;
+        }
+
+        function renderStep() {
+            // move the window (you can think of different strategies).
+            var now = vis.moment();
+            var range = graph2d.getWindow();
+            var interval = range.end - range.start;
+            switch (strategy.value) {
+                case 'continuous':
+                    // continuously move the window
+                    graph2d.setWindow(now - interval, now, {
+                        animation: false
+                    });
+                    requestAnimationFrame(renderStep);
+                    break;
+
+                case 'discrete':
+                    graph2d.setWindow(now - interval, now, {
+                        animation: false
+                    });
+                    setTimeout(renderStep, DELAY);
+                    break;
+
+                default: // 'static'
+                    // move the window 90% to the left when now is larger than the end of the window
+                    if (now > range.end) {
+                        graph2d.setWindow(now - 0.1 * interval, now + 0.9 * interval);
+                    }
+                    setTimeout(renderStep, DELAY);
+                    break;
+            }
+        }
+        renderStep();
+
+        /**
+         * Add a new datapoint to the graph
+         */
+        function addDataPoint(x, y) {
+            // add a new data point to the dataset
+            var now = vis.moment();
+            dataset.add({
+                x: now,
+                y: y
+            });
+
+            // remove all data points which are no longer visible
+            var range = graph2d.getWindow();
+            var interval = range.end - range.start;
+            var oldIds = dataset.getIds({
+                filter: function(item) {
+                    return item.x < range.start - interval;
+                }
+            });
+            dataset.remove(oldIds);
+
+
+        }
+
+    </script>
+
+    <script src="js/main.cosmos.js"></script>
+
+    <!-- / VIS GRAPH -->
+
+</body>
+
+</html>
