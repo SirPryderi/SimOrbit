@@ -17,21 +17,21 @@ function Celestial_object(mass, radius, semimajoraxis, eccentricity) {
     this.standard_gravitational_parameter = this.mass * g_constant;
     this.argumentPeriapsis = 0;
     this.angularVelocity = 1;
+    this.orbitalPeriod = null;
+    this.meanMotion = null;
+    this.soi = null; // sphere of influence, it will be calculated when an object is set as another's children.
 
-    this.orbitalArea = PI * this.semimajoraxis * this.semiminoraxis;
-    /*this.arealSpeed = this.orbitalArea / this.orbitalPeriod;*/
+    this.calcOrbitalPeriod = function () {
+        this.orbitalPeriod = 2 * PI * sqrt(pow(this.semimajoraxis, 3) / this.parentObject.standard_gravitational_parameter);
+    };
 
-    this.__defineGetter__('orbitalPeriod', function () {
-        if (this.parentObject !== null) {
-            return 2 * PI * sqrt(pow(this.semimajoraxis, 3) / this.parentObject.standard_gravitational_parameter);
-        } else {
-            return false;
-        }
-    });
+    this.calcMeanMotion = function () {
+        this.meanMotion = sqrt(g_constant * (this.mass + this.parentObject.mass) / pow(this.semimajoraxis, 3));
+    };
 
-    this.__defineGetter__('meanMotion', function () {
-        return sqrt(g_constant * (this.mass + this.parentObject.mass) / pow(this.semimajoraxis, 3));
-    });
+    this.calcSOI = function () {
+        this.soi = this.semimajoraxis * pow(this.mass / this.parentObject.mass, 0.4);
+    }
 
     this.renderChildren = function () {
         this.childrenObjects.forEach(function (obj) {
@@ -61,10 +61,9 @@ function Celestial_object(mass, radius, semimajoraxis, eccentricity) {
             /* start rendering */
             {
                 ctx.lineWidth = 1 / zoom_level;
-                //ctx.save();
-                //ctx.rotate(obj.argumentPeriapsis);
+                rotateAxis(obj.argumentPeriapsis);
 
-                drawEllipse(0, 0, obj.semimajoraxis * 2, obj.semiminoraxis * 2, 0, "rgba(0, 255, 255, 1)");
+                drawEllipse(-obj.focus, -obj.semiminoraxis, obj.semimajoraxis * 2, obj.semiminoraxis * 2, 0, "rgba(0, 255, 255, 1)");
 
                 ctx.lineWidth = 1;
 
@@ -95,23 +94,33 @@ function Celestial_object(mass, radius, semimajoraxis, eccentricity) {
                 obj.render();
 
                 drawUnzoomablePoint(0, 0, dotColor);
+
+                ctx.lineWidth = 1 / zoom_level;
+
+                drawCircle(0, 0, obj.soi, "green"); // render SOI
+
             }
             /* end rendering */
 
             obj.renderChildren();
 
             ctx.restore(); // restore rototraslation
-            //ctx.restore(); // restore rotation
+            ctx.restore(); // restore rotation
         });
     }
 
     this.addChild = function (body) {
         body.parentObject = this;
+        //calculate sphere of influence
+        body.calcSOI();
+        body.calcMeanMotion();
+        body.calcOrbitalPeriod();
+        //finally add the object into the parent's children list
         this.childrenObjects.push(body);
     };
 
     this.drawAtmosphere = function (atmosphere_radius, color_1, color_2) {
-        atmosphere_radius = zoomify(atmosphere_radius);
+        atmosphere_radius = atmosphere_radius;
         var gradient = ctx.createRadialGradient(0, 0, atmosphere_radius, 0, 0, this.radius);
         gradient.addColorStop(0, color_1);
         gradient.addColorStop(1, color_2);
@@ -135,13 +144,13 @@ function Star(mass, radius, semimajoraxis, eccentricity, temperature) {
         var percentage = this.temperature / 30000;
 
         /*
-            ctx.beginPath();
-            ctx.arc(0, 0, this.radius, 0, Math.PI * 2, false);
-            //ctx.fillStyle = 'rgba(255,252,225,1)';
-    
-            ctx.fillStyle = getColorForPercentage(percentage, 1);
-            ctx.fill();
-            */
+        ctx.beginPath();
+        ctx.arc(0, 0, this.radius, 0, Math.PI * 2, false);
+        //ctx.fillStyle = 'rgba(255,252,225,1)';
+
+        ctx.fillStyle = getColorForPercentage(percentage, 1);
+        ctx.fill();
+        */
 
         var atmosphere_radius = this.radius * 1.1;
         this.drawAtmosphere(atmosphere_radius, getColorForPercentage(percentage, 0), getColorForPercentage(percentage, 1));
