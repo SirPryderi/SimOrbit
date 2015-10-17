@@ -3,11 +3,11 @@
 
 Hello! This project aims to create a space physics simulation running in your browser.
 More likely it will just cause some lags, but that's the best part of an alpha project, isn't it?
-Right now there are to main pages:
+Right now there are two main pages:
 * index, that will allow you to drive a little red particle in the void of space.
 * cosmos, that feature multiplanetary simulation. The two will be eventually merged so that you can move from one planet to another.
 
-# Live preview
+# Live previews
 
 [Click here](http://htmlpreview.github.io/?https://github.com/SirPryderi/space.fwd/blob/master/index.html) for a live preview of the current development state. Enjoy!
 
