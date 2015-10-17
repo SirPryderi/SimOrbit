@@ -3,6 +3,7 @@ function Celestial_object(mass, radius, semimajoraxis, eccentricity) {
     /* Simulation Parameter */
     this.x = 0;
     this.y = 0;
+    this.z = 0;
 
     this.parentObject = null;
     this.childrenObjects = [];
