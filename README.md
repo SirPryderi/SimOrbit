@@ -7,6 +7,10 @@ Right now there are to main pages:
 * index, that will allow you to drive a little red particle in the void of space.
 * cosmos, that feature multiplanetary simulation. The two will be eventually merged so that you can move from one planet to another.
 
+# Live preview
+
+[Click here](http://htmlpreview.github.io/?https://github.com/SirPryderi/space.fwd/blob/master/index.html) for a live preview of the current development state. Enjoy!
+
 # Controls
 You can take off that red particle using ```[spacebar]```. Use the arrows to apply impulses and alter the particle trajectory.
 ```[W][A][S][D]``` keys will pan the camera, while the ```[mousewheel]``` will change the zoom.
