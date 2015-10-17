@@ -13,10 +13,22 @@
         }
 
     </style>
+    <script src="js/jquery.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r72/three.min.js" type="text/javascript"></script>
+    <script src="js/core.lib.js"></script>
+    <script src="js/draw.js"></script>
+    <script src="js/math.js"></script>
+    <script src="js/physic.js"></script>
+    <script src="js/engine.js"></script>
+    <script src="js/body.js"></script>
+    <script src="js/body.drawOrbit.js"></script>
+    <script src="js/avionix.js"></script>
+    <script src="js/joypad.js"></script>
+
 </head>
 
 <body>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r72/three.min.js" type="text/javascript"></script>
+
     <script>
         var scene = new THREE.Scene();
         var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -57,6 +69,8 @@
         camera.position.z = 5;
 
         ellipse.rotation.x += Math.PI;
+
+        cube.position.y = -2;
 
         var render = function() {
             requestAnimationFrame(render);

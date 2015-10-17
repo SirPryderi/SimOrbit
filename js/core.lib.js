@@ -1,8 +1,3 @@
-Object.prototype.makeChildOf = function(parent) {
-    this.prototype = Object.create(parent.prototype);
-    this.prototype.constructor = this;
-}
-
 function isEventSupported(eventName) {
     var el = document.createElement('div');
     eventName = 'on' + eventName;
@@ -13,4 +8,17 @@ function isEventSupported(eventName) {
     }
     el = null;
     return isSupported;
+}
+
+/*
+Object.prototype.makeChildOf = function () {
+    parent = arguments[0];
+    this.prototype = Object.create(parent.prototype);
+    this.prototype.constructor = this;
+}
+*/
+
+function makeChildOf(child, parent) {
+    child.prototype = Object.create(parent.prototype);
+    child.prototype.constructor = child;
 }

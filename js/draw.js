@@ -129,7 +129,6 @@ function drawQuadraticCurve(x1, y1, x2, y2, style) {
     ctx.stroke();
 }
 
-
 function drawLine(x1, y1, x2, y2, style) {
     ctx.beginPath();
     ctx.moveTo(x1, y1);

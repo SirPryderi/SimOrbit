@@ -21,6 +21,21 @@ function Celestial_object(mass, radius, semimajoraxis, eccentricity) {
     this.meanMotion = null;
     this.soi = null; // sphere of influence, it will be calculated when an object is set as another's children.
 
+
+    //Renderer
+
+
+    var geometry = new THREE.SphereGeometry(this.radius, 32, 32);
+    var material = new THREE.MeshBasicMaterial({
+        color: 0xffff00
+    });
+    var sphere = new THREE.Mesh(geometry);
+
+    sphere.position.x = this.x;
+    sphere.position.y = this.y;
+    this.geometry = sphere;
+
+
     this.calcOrbitalPeriod = function () {
         this.orbitalPeriod = 2 * PI * sqrt(pow(this.semimajoraxis, 3) / this.parentObject.standard_gravitational_parameter);
     };
@@ -53,12 +68,17 @@ function Celestial_object(mass, radius, semimajoraxis, eccentricity) {
             if (obj.parentObject != null) {
                 obj.x = obj.parentObject.x - obj.semimajoraxis * (cos(eccentricAnomaly) - obj.eccentricity); //radius * cos(trueAnomaly + obj.argumentPeriapsis);
                 obj.y = obj.parentObject.y - obj.semiminoraxis * sin(eccentricAnomaly); //radius * sin(trueAnomaly + obj.argumentPeriapsis);
+
+                obj.geometry.position.x = obj.x;
+                obj.geometry.position.y = obj.y;
                 //obj.x = obj.parentObject.x - radius * cos(trueAnomaly + obj.argumentPeriapsis);
                 //obj.y = obj.parentObject.y - radius * sin(trueAnomaly + obj.argumentPeriapsis);
 
             }
 
-            /* start rendering */
+
+
+            /* start rendering 
             {
                 ctx.lineWidth = 1 / zoom_level;
                 rotateAxis(obj.argumentPeriapsis);
@@ -100,12 +120,9 @@ function Celestial_object(mass, radius, semimajoraxis, eccentricity) {
                 drawCircle(0, 0, obj.soi, "green"); // render SOI
 
             }
-            /* end rendering */
+            end rendering */
 
             obj.renderChildren();
-
-            ctx.restore(); // restore rototraslation
-            ctx.restore(); // restore rotation
         });
     }
 
@@ -143,21 +160,15 @@ function Star(mass, radius, semimajoraxis, eccentricity, temperature) {
     this.render = function () {
         var percentage = this.temperature / 30000;
 
-        /*
-        ctx.beginPath();
-        ctx.arc(0, 0, this.radius, 0, Math.PI * 2, false);
-        //ctx.fillStyle = 'rgba(255,252,225,1)';
-
-        ctx.fillStyle = getColorForPercentage(percentage, 1);
-        ctx.fill();
-        */
-
         var atmosphere_radius = this.radius * 1.1;
-        this.drawAtmosphere(atmosphere_radius, getColorForPercentage(percentage, 0), getColorForPercentage(percentage, 1));
+
+        //this.mesh.position.x = this.x;
+
+        //this.drawAtmosphere(atmosphere_radius, getColorForPercentage(percentage, 0), getColorForPercentage(percentage, 1));
     };
 }
 
-Star.makeChildOf(Celestial_object);
+makeChildOf(Star, Celestial_object);
 
 /* PLANETS */
 
@@ -180,4 +191,4 @@ function Planet(mass, radius, semimajoraxis, eccentricity, atmospheric_pressure,
 
 }
 
-Planet.makeChildOf(Celestial_object);
+makeChildOf(Planet, Celestial_object);

@@ -71,24 +71,24 @@ $(document).keydown(function (e) {
             moveNow();
             break;
         case 87: //w
-            camera_position.y -= 20 / zoom_level;
+            camera.position.y -= 20 / zoom_level;
             break;
         case 83: //s
-            camera_position.y += 20 / zoom_level;
+            camera.position.y += 20 / zoom_level;
             break;
         case 68: //d
-            camera_position.x += 20 / zoom_level;
+            camera.position.x += 20 / zoom_level;
             break;
         case 65: //a
-            camera_position.x -= 20 / zoom_level;
+            camera.position.x -= 20 / zoom_level;
             break;
         case 90: //z
-            camera_position.x = focusedObject().pos_x;
-            camera_position.y = focusedObject().pos_y;
+            camera.position.x = focusedObject().pos_x;
+            camera.position.y = focusedObject().pos_y;
             break;
         case 88: //x
-            camera_position.x = 0;
-            camera_position.y = 0;
+            camera.position.x = 0;
+            camera.position.y = 0;
             break;
         case 81: //q
             toggleFVV();
@@ -150,27 +150,6 @@ $('#playbox').bind('touchend', function (e) {
     //console.log(touch_start);
 
     //alert(e.originalEvent.touches[0].length);
-
-    e.preventDefault();
-});
-
-/* mouse scroll events */
-
-var wheelEvent = isEventSupported('mousewheel') ? 'mousewheel' : 'wheel';
-
-// Now bind the event to the desired element
-$('body').on(wheelEvent, function (e) {
-    var oEvent = e.originalEvent,
-        delta = oEvent.deltaY || oEvent.wheelDelta;
-
-    // deltaY for wheel event
-    // wheelData for mousewheel event
-
-    if (delta < 0) {
-        zoom_level = (zoom_level * Math.abs(delta)) / 50;
-    } else {
-        zoom_level = (zoom_level / Math.abs(delta)) * 50;
-    }
 
     e.preventDefault();
 });

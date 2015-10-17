@@ -4,26 +4,26 @@ function Spacecraft(mass, x, y, fuelTank, fuel) {
     this.fuelTank = new FuelTank(50);
     this.fuelTank.fill(fuel);
     this._mass = mass;
-    
-    this.__defineGetter__('mass', function (){
+
+    this.__defineGetter__('mass', function () {
         //console.log(this._mass);
         return this._mass + this.fuelTank.amount * this.fuelTank.fuel.density;
     });
 }
 
-Spacecraft.makeChildOf(Body);
+makeChildOf(Spacecraft, Body);
 
-Spacecraft.prototype.applyImpulse = function(force_x, force_y, follow_velocity) {
+Spacecraft.prototype.applyImpulse = function (force_x, force_y, follow_velocity) {
 
     var totalForce = hypotenuse(force_x, force_y);
     if (this.fuelTank.amount >= totalForce / this.fuelTank.fuel.efficiency) {
-        
-        if(!infinite_fuel){ // cheating
+
+        if (!infinite_fuel) { // cheating
             this.fuelTank.amount -= totalForce / this.fuelTank.fuel.efficiency;
         }
-        
+
         // This will change the remaining fuel amuont. Hopefully.
-        
+
         if (follow_velocity) {
             var velocity_angle = this.getVelocityVector() + PI / 2;
             this.vel_x += (force_x * Math.cos(velocity_angle) - force_y * Math.sin(velocity_angle)) / this.mass;
@@ -37,10 +37,3 @@ Spacecraft.prototype.applyImpulse = function(force_x, force_y, follow_velocity) 
         console.log('no fuel');
     }
 };
-/*
-Object.defineProperty(Spacecraft.prototype, 'mass',{
-    get: function (){
-        console.log(this);
-        return this._mass;
-    }
-});*/
