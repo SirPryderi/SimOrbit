@@ -4,7 +4,7 @@ console.log(body1.mass);
 
 var satellite = new Body(10000, 0, -300);
 
-
+/*
 var i = 0;
 
 while (i++ < 500) {
@@ -18,6 +18,7 @@ while (i++ < 500) {
     satellite.vel_y = velocity * sin(angle);
     placeObject(satellite);
 }
+*/
 
 body1.setRadialCoordinate(Math.PI * 2);
 

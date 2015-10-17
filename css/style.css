@@ -6,6 +6,7 @@ body {
     background-color: black;
     margin: 0;
     color: white;
+    overflow: hidden;
 }
 body.soviet {
     font-family: soviet;
