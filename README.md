@@ -17,4 +17,4 @@ In space, no one can hear you scream, but on GitHub someone might. If you are wi
 
 # Screen
 
-![alt tag](https://github.com/SirPryderi/space.fwd/tree/master/imgs/screen/screen.png)
+![alt tag](https://raw.githubusercontent.com/SirPryderi/space.fwd/master/imgs/screen/screen.png)
