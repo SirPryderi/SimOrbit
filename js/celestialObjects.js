@@ -25,11 +25,15 @@ function Celestial_object(mass, radius, semimajoraxis, eccentricity) {
     //Renderer
 
 
-    var geometry = new THREE.SphereGeometry(this.radius, 32, 32);
-    var material = new THREE.MeshBasicMaterial({
-        color: 0xffff00
+    var geometry = new THREE.SphereGeometry(this.radius, 128, 128);
+    var material = new THREE.MeshPhongMaterial({
+        color: 0xdddddd,
+        specular: 0x009900,
+        shininess: 10,
+        //emissive: 0xdddddd,
+        shading: THREE.FlatShading
     });
-    var sphere = new THREE.Mesh(geometry);
+    var sphere = new THREE.Mesh(geometry, material);
 
     sphere.position.x = this.x;
     sphere.position.y = this.y;
@@ -50,7 +54,7 @@ function Celestial_object(mass, radius, semimajoraxis, eccentricity) {
 
     this.renderChildren = function () {
         this.childrenObjects.forEach(function (obj) {
-            var time = global_timestamp / 1000 + Date.now() / 1000;
+            //var time = global_timestamp / 1000 + Date.now() / 1000;
             //var dT = (Date.now() - global_timestamp) / 1000 * time_warp;
 
             var dT = (window.performance.now()) / 1000 * time_warp;

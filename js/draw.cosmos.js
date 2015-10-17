@@ -2,13 +2,22 @@ var camera, controls, scene, renderer;
 
 var cross;
 
+function addObjectsToScene(obj) {
+    scene.add(obj.geometry);
+    obj.childrenObjects.forEach(function (obj) {
+        addObjectsToScene(obj);
+    });
+}
+
 function init2() {
     scene = new THREE.Scene();
-    camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 1000e200);
 
     controls = new THREE.OrbitControls(camera);
 
-    renderer = new THREE.WebGLRenderer();
+    renderer = new THREE.WebGLRenderer({
+        antialias: true
+    });
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.getElementById('here').appendChild(renderer.domElement);
 
@@ -18,11 +27,15 @@ function init2() {
     });
     var cube = new THREE.Mesh(geometry, material);
 
+    cube.position.x = 5;
+    cube.position.y = 5;
+
+
 
     var curve = new THREE.EllipseCurve(
         //asd
-        planetoid.focus, 0, // ax, aY
-        planetoid.semimajoraxis, planetoid.semiminoraxis, // xRadius, yRadius
+        gas_giant.focus, 0, // ax, aY
+        gas_giant.semimajoraxis, gas_giant.semiminoraxis, // xRadius, yRadius
         0, 2 * Math.PI, // aStartAngle, aEndAngle
         false, // aClockwise
         0 // aRotation 
@@ -37,7 +50,16 @@ function init2() {
     // Create the final Object3d to add to the scene
     var ellipse = new THREE.Line(geometry, material);
 
-    //scene.add(cube);
+
+    var SOPS = new THREE.Geometry();
+    SOPS.vertices.push(new THREE.Vector3(0, 0, 0));
+    SOPS.vertices.push(gas_giant.geometry.position);
+
+    var line = new THREE.Line(SOPS, material);
+
+    scene.add(cube);
+
+    scene.add(line);
 
     camera.up = new THREE.Vector3(0, 0, 1);
 
@@ -45,17 +67,20 @@ function init2() {
 
     scene.add(ellipse);
 
-    scene.add(cube);
+    addObjectsToScene(root);
 
-    scene.add(root.geometry);
+    var light = new THREE.AmbientLight(0x404040); // soft white light
+    scene.add(light);
 
-    scene.add(planetoid.geometry);
 
-    console.log(planetoid.geometry);
-
-    //root.chi
+    var light = new THREE.PointLight(0xffcccc, 4, 0);
+    light.position.set(0, 0, 0);
+    light.castShadow = true;
+    scene.add(light);
 
     ellipse.rotation.x += Math.PI;
+
+
 
     var render = function () {
         requestAnimationFrame(render);
@@ -63,6 +88,14 @@ function init2() {
         root.render(); // This will render the root object (sun or center of the galaxy);
 
         root.renderChildren(); // This will rendere root children. Warning,  recursion inside!
+
+        line.geometry.vertices[1].x = star.x;
+        line.geometry.vertices[1].y = star.y;
+        line.geometry.verticesNeedUpdate = true;
+
+
+        camera.lookAt(earth.geometry.position);
+
 
         renderer.render(scene, camera);
 
@@ -75,8 +108,6 @@ function init2() {
 }
 
 function animate() {
-
     requestAnimationFrame(animate);
     controls.update();
-
 }
