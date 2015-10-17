@@ -30,15 +30,40 @@
             color: 0x00ff00
         });
         var cube = new THREE.Mesh(geometry, material);
+
+
+        var curve = new THREE.EllipseCurve(
+            0, 0, // ax, aY
+            5, 1, // xRadius, yRadius
+            0, 2 * Math.PI, // aStartAngle, aEndAngle
+            false, // aClockwise
+            0 // aRotation 
+        );
+
+        var path = new THREE.Path(curve.getPoints(100));
+        var geometry = path.createPointsGeometry(100);
+        var material = new THREE.LineBasicMaterial({
+            color: 0xff0000
+        });
+
+        // Create the final Object3d to add to the scene
+        var ellipse = new THREE.Line(geometry, material);
+
+
+
         scene.add(cube);
+        scene.add(ellipse);
 
         camera.position.z = 5;
+
+        ellipse.rotation.x += Math.PI;
 
         var render = function() {
             requestAnimationFrame(render);
 
             cube.rotation.x += 0.1;
-            cube.rotation.y += 0.1;
+            cube.position.y += 0.01;
+
 
             renderer.render(scene, camera);
         };

@@ -5,7 +5,6 @@ var focusedIndex = 0;
 launchVelocity = 15;
 
 function moveNow() {
-
     if (relativeObjects[focusedIndex]) {
         relativeObjects[focusedIndex].vel_y = launchVelocity;
 
@@ -51,7 +50,7 @@ function toggleSOPS() {
 var ellipse_angle = 0;
 
 var keyImpulse = 100;
-$(document).keydown(function(e) {
+$(document).keydown(function (e) {
     switch (e.which) {
         case 37: // left
             focusedObject().applyImpulse(-keyImpulse, 0, FVV);
@@ -124,18 +123,18 @@ var touch_start = {
     }
 
 
-$('#playbox').bind('touchstart', function(e) {
+$('#playbox').bind('touchstart', function (e) {
     touch_start.x = e.originalEvent.touches[0].pageX;
     touch_start.y = e.originalEvent.touches[0].pageY;
 });
 
-$('#playbox').bind('touchmove', function(e) {
+$('#playbox').bind('touchmove', function (e) {
     e.preventDefault();
 });
 
 var touch_sensibility = 5;
 
-$('#playbox').bind('touchend', function(e) {
+$('#playbox').bind('touchend', function (e) {
     //touch_end.x = e.originalEvent.touches[0].pageX;
     //touch_end.y = e.originalEvent.touches[0].pageX;
 
@@ -160,7 +159,7 @@ $('#playbox').bind('touchend', function(e) {
 var wheelEvent = isEventSupported('mousewheel') ? 'mousewheel' : 'wheel';
 
 // Now bind the event to the desired element
-$('body').on(wheelEvent, function(e) {
+$('body').on(wheelEvent, function (e) {
     var oEvent = e.originalEvent,
         delta = oEvent.deltaY || oEvent.wheelDelta;
 
@@ -168,11 +167,11 @@ $('body').on(wheelEvent, function(e) {
     // wheelData for mousewheel event
 
     if (delta < 0) {
-        zoom_level = (zoom_level * Math.abs(delta))  / 50;
+        zoom_level = (zoom_level * Math.abs(delta)) / 50;
     } else {
         zoom_level = (zoom_level / Math.abs(delta)) * 50;
     }
-    
+
     e.preventDefault();
 });
 
