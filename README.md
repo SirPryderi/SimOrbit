@@ -9,8 +9,8 @@ Right now there are two main pages:
 
 # Live previews
 
-[Click here](http://htmlpreview.github.io/?https://github.com/SirPryderi/space.fwd/blob/master/index.html) for a live preview of the current development state. Enjoy!
-[Very Early 3D preview](http://goo.gl/O3JNNF) you may need a towel to go further
+* [Click here](http://htmlpreview.github.io/?https://github.com/SirPryderi/space.fwd/blob/master/index.html) for a live preview of the current development state. Enjoy!
+* [Very Early 3D preview](http://goo.gl/O3JNNF) you may need a towel to go further
 
 # Controls
 You can take off that red particle using ```[spacebar]```. Use the arrows to apply impulses and alter the particle trajectory.
