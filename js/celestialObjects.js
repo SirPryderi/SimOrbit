@@ -1,4 +1,27 @@
 /* CELSTIAL OBJECTS */
+var planet_material = new THREE.MeshPhongMaterial({
+    color: 0xdddddd,
+    specular: 0x009900,
+    shininess: 10,
+    //emissive: 0xdddddd,
+    shading: THREE.FlatShading
+});
+
+var star_material = new THREE.MeshPhongMaterial({
+    color: 0xff8000,
+    specular: 0x009900,
+    shininess: 0.5,
+    emissive: 0xff8000,
+    shading: THREE.FlatShading
+})
+
+function getPlanetMesh(radius, material) {
+    var geometry = new THREE.SphereGeometry(radius, 128, 128);
+    var sphere = new THREE.Mesh(geometry, material);
+    return sphere;
+}
+
+
 function Celestial_object(mass, radius, semimajoraxis, eccentricity) {
     /* Simulation Parameter */
     this.x = 0;
@@ -15,31 +38,26 @@ function Celestial_object(mass, radius, semimajoraxis, eccentricity) {
     this.semimajoraxis = semimajoraxis;
     this.semiminoraxis = this.semimajoraxis * sqrt(1 - pow(this.eccentricity, 2));
     this.focus = antihypotenuse(this.semimajoraxis, this.semiminoraxis);
+    this.orbitalRadius = 0;
     this.standard_gravitational_parameter = this.mass * g_constant;
     this.argumentPeriapsis = 0;
     this.angularVelocity = 1;
     this.orbitalPeriod = null;
     this.meanMotion = null;
-    this.soi = null; // sphere of influence, it will be calculated when an object is set as another's children.
+    this.soi = Infinity; // sphere of influence, it will be calculated when an object is set as another's children.
+
+    console.log(this);
 
 
     //Renderer
 
-
-    var geometry = new THREE.SphereGeometry(this.radius, 128, 128);
-    var material = new THREE.MeshPhongMaterial({
-        color: 0xdddddd,
-        specular: 0x009900,
-        shininess: 10,
-        //emissive: 0xdddddd,
-        shading: THREE.FlatShading
-    });
-    var sphere = new THREE.Mesh(geometry, material);
+    var sphere = getPlanetMesh(this.radius, planet_material);
 
     sphere.position.x = this.x;
-    sphere.position.y = this.y;
-    this.geometry = sphere;
+    sphere.position.z = this.z;
 
+    this.geometry = sphere; // this is the main mesh of the object
+    this.meshes = []; // Here should be contained all kind of children meshes
 
     this.calcOrbitalPeriod = function () {
         this.orbitalPeriod = 2 * PI * sqrt(pow(this.semimajoraxis, 3) / this.parentObject.standard_gravitational_parameter);
@@ -70,62 +88,15 @@ function Celestial_object(mass, radius, semimajoraxis, eccentricity) {
 
             var radius = obj.semimajoraxis * (1 - obj.eccentricity * cos(eccentricAnomaly));
 
-            if (obj.parentObject != null) {
-                obj.x = obj.parentObject.x - obj.semimajoraxis * (cos(eccentricAnomaly) - obj.eccentricity); //radius * cos(trueAnomaly + obj.argumentPeriapsis);
-                obj.y = obj.parentObject.y - obj.semiminoraxis * sin(eccentricAnomaly); //radius * sin(trueAnomaly + obj.argumentPeriapsis);
+            obj.orbitalRadius = radius;
 
-                obj.geometry.position.x = obj.x;
-                obj.geometry.position.y = obj.y;
-                //obj.x = obj.parentObject.x - radius * cos(trueAnomaly + obj.argumentPeriapsis);
-                //obj.y = obj.parentObject.y - radius * sin(trueAnomaly + obj.argumentPeriapsis);
+            obj.x = obj.parentObject.x - obj.semimajoraxis * (cos(eccentricAnomaly) - obj.eccentricity); //radius * cos(trueAnomaly + obj.argumentPeriapsis);
+            obj.y = obj.parentObject.y - obj.semiminoraxis * sin(eccentricAnomaly); //radius * sin(trueAnomaly + obj.argumentPeriapsis);
 
-            }
-
-
-
-            /* start rendering 
-            {
-                ctx.lineWidth = 1 / zoom_level;
-                rotateAxis(obj.argumentPeriapsis);
-
-                drawEllipse(-obj.focus, -obj.semiminoraxis, obj.semimajoraxis * 2, obj.semiminoraxis * 2, 0, "rgba(0, 255, 255, 1)");
-
-                ctx.lineWidth = 1;
-
-                //drawUnzoomablePoint(-obj.focus + obj.semiminoraxis, 0, "cyan");
-
-                drawUnzoomablePoint(obj.focus - obj.semimajoraxis, 0, "pink");
-
-                drawUnzoomablePoint(obj.focus + obj.semimajoraxis, 0, "pink");
-
-                drawUnzoomablePoint(obj.focus, obj.semiminoraxis);
-
-                drawUnzoomablePoint(obj.focus, -obj.semiminoraxis);
-
-                //addDataPoint(4, obj.y);
-
-                rotoTraslateAxis(-radius, 0, trueAnomaly);
-
-                var dotColor = "red";
-
-                if (obj.childrenObjects.length) { // If this object has children the dot will be yellow
-                    dotColor = "yellow";
-                }
-
-                if (obj.parentObject != root) { // if it is a moon
-                    dotColor = "blue";
-                }
-
-                obj.render();
-
-                drawUnzoomablePoint(0, 0, dotColor);
-
-                ctx.lineWidth = 1 / zoom_level;
-
-                drawCircle(0, 0, obj.soi, "green"); // render SOI
-
-            }
-            end rendering */
+            //update mesh
+            obj.geometry.position.x = obj.x;
+            obj.geometry.position.y = 0;
+            obj.geometry.position.z = obj.y;
 
             obj.renderChildren();
         });
@@ -138,6 +109,31 @@ function Celestial_object(mass, radius, semimajoraxis, eccentricity) {
         body.calcMeanMotion();
         body.calcOrbitalPeriod();
         //finally add the object into the parent's children list
+
+        { // Adding ellipse
+            var curve = new THREE.EllipseCurve(
+                //asd
+                body.focus - this.x, -this.y, // ax, aY
+                body.semimajoraxis, body.semiminoraxis, // xRadius, yRadius
+                0, 2 * Math.PI, // aStartAngle, aEndAngle
+                false, // aClockwise
+                0 // aRotation 
+            );
+
+            var path = new THREE.Path(curve.getPoints(2000));
+            var geometry = path.createPointsGeometry(2000);
+            var material = new THREE.LineBasicMaterial({
+                color: 0xff0000
+            });
+
+            // Create the final Object3d to add to the scene
+            var ellipse = new THREE.Line(geometry, material);
+
+            ellipse.rotation.x = Math.PI / 2;
+
+            body.meshes.push(ellipse);
+        }
+
         this.childrenObjects.push(body);
     };
 
@@ -153,7 +149,11 @@ function Celestial_object(mass, radius, semimajoraxis, eccentricity) {
     this.lookAt = function () {
         camera_position.x = this.x;
         camera_position.y = this.y;
-    }
+    };
+
+    this.getOrbitalVelocity = function () {
+        return sqrt(this.parentObject.standard_gravitational_parameter * ((2 / this.orbitalRadius) - (1 / this.semimajoraxis)));
+    };
 
 }
 
@@ -161,6 +161,8 @@ function Celestial_object(mass, radius, semimajoraxis, eccentricity) {
 function Star(mass, radius, semimajoraxis, eccentricity, temperature) {
     Celestial_object.call(this, mass, radius, semimajoraxis, eccentricity);
     this.temperature = temperature;
+
+    this.geometry.material = star_material;
 
     this.render = function () {
         var percentage = this.temperature / 30000;

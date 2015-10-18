@@ -30,119 +30,15 @@
 <body>
     <section id="first">
         <span id="here"></span>
-        <toolbar>
-            <!--<button onclick="moveNow()">Take Off</button>
-            <button onclick="benchMarkStart()">Benchmark</button>
-            <button onclick="absoluteObjects[0].applyImpulse(1, 0)">Apply Force</button>
-            <button onclick="getGeostationaryOrbit()">Get Geostationary Orbit</button>
-            <button onclick="toggleFVV(this);" id="FVV" title="Toggle Follow Velocity Vector">Toggle FVV</button>
-            <button onclick="toggleSOPS();" id="SOPS" title="Toggle Space Object Positioning System">Toggle SOPS</button>
-            <button onclick="$('avionics').toggle();" title="Toggle lower HUD">Toggle DATA</button>
-            <button onclick="$('avionics').toggle();" title="Toggle lower HUD">Toggle DATA</button>
-            <input type="range" min="0" max="50" value="15" id="launchVelocity" onchange="launchVelocity = this.value"/>
--->
-            <button onclick="debug()" title="Toggle lower HUD">DEINSETTA</button>
-        </toolbar>
-
-        <avionics>
-            <orbital>
-                <table>
-                    <tr>
-                        <td>Periapsis</td>
-                        <td id="periapsis"></td>
-                        <td class="unit">m</td>
-                    </tr>
-
-                    <tr>
-                        <td>Apoapsis</td>
-                        <td id="apoapsis"></td>
-                        <td class="unit">m</td>
-                    </tr>
-
-                    <tr>
-                        <td>Eccentricity</td>
-                        <td id="eccentricity"></td>
-                        <td class="unit"></td>
-                    </tr>
-
-
-                    <tr>
-                        <td>Semi-Major Axis</td>
-                        <td id="semimajoraxis"></td>
-                        <td class="unit">m</td>
-                    </tr>
-                    <tr>
-                        <td>Semi-Minor Axis</td>
-                        <td id="semiminoraxis"></td>
-                        <td class="unit">m</td>
-                    </tr>
-
-                    <tr>
-                        <td>Circular Orbit @</td>
-                        <td id="circularOrbitVelocity"></td>
-                        <td class="unit">m/s</td>
-                    </tr>
-
-                    <tr>
-                        <td>Orbital Period</td>
-                        <td id="orbitalPeriod"></td>
-                        <td class="unit">s</td>
-                    </tr>
-                </table>
-            </orbital>
-
-            <table>
-                <tr>
-
-                    <td>GForce</td>
-                    <td id="gforce"></td>
-                    <td class="unit">G</td>
-
-                    <td>Velocity</td>
-                    <td id="speed"></td>
-                    <td class="unit">m/s</td>
-
-                    <td>Vertical Speed</td>
-                    <td id="verticalSpeed"></td>
-                    <td class="unit">m/s</td>
-                </tr>
-                <tr>
-
-                    <td>Acceleration</td>
-                    <td id="acceleration"></td>
-                    <td class="unit">m/s<sup>2</sup></td>
-
-                    <td>Velocity Vector</td>
-                    <td id="velocityVector"></td>
-                    <td class="unit">&deg;</td>
-
-                    <td>Altutide</td>
-                    <td id="altitude"></td>
-                    <td class="unit">m</td>
-                </tr>
-                <tr>
-                    <td>Escape &Delta;V</td>
-                    <td id="escapedV"></td>
-                    <td class="unit">m/s</td>
-
-
-                    <td>Escape Velocity</td>
-                    <td id="escapeSpeed"></td>
-                    <td class="unit">m/s</td>
-                </tr>
-            </table>
-            </br>
-        </avionics>
+        <!--AVIONCS HERE-->
     </section>
-    <!--
-    <section>
-        <canvas id="canvas" width="800" height="800"></canvas>
-    </section>
-    -->
+
     <script src="js/jquery.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r72/three.min.js" type="text/javascript"></script>
+    <script src="js/orbitCamera.js"></script>
     <script src="js/core.lib.js"></script>
+    <!---->
     <script src="js/draw.js"></script>
-    <script src="js/draw.cosmos.js"></script>
     <script src="js/celestialObjects.js"></script>
     <script src="js/math.js"></script>
     <script src="js/physic.js"></script>
@@ -151,18 +47,10 @@
     <script src="js/body.drawOrbit.js"></script>
     <script src="js/avionix.js"></script>
     <script src="js/joypad.js"></script>
-
     <script src="js/spacecraft.js"></script>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r72/three.min.js" type="text/javascript"></script>
-    <script src="https://dl.dropboxusercontent.com/u/3587259/Code/Threejs/OrbitControls.js"></script>
-    
-    <script></script>
-
+    <!---->
+    <script src="js/draw.cosmos.js"></script>
     <script src="js/main.cosmos.js"></script>
-
-
-
 </body>
 
 </html>

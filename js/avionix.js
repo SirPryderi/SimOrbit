@@ -2,6 +2,8 @@ var benchMark1;
 
 var focusedIndex = 0;
 
+var focusedObj = null;
+
 launchVelocity = 15;
 
 function moveNow() {
