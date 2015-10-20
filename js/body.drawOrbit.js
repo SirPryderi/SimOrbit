@@ -1,30 +1,34 @@
 Body.prototype.drawOrbit = function () {
-    var distance = this.getDistance();
+    var orbited_object = earth;
 
-    var g = -standard_gravitational_parameter / Math.pow(distance, 2);
+    var distance = getDistanceFromTwoObjects(this, orbited_object);
+
+    var g = this.g; //-standard_gravitational_parameter / Math.pow(distance, 2);
 
     //Avionix
-    var gforce = -g / (standard_gravitational_parameter / Math.pow(earth_radius, 2));
+    var gforce = -g / 9.81; //-g / (standard_gravitational_parameter / Math.pow(earth_radius, 2));
     var speed = Math.sqrt(Math.pow(this.vel_x, 2) + Math.pow(this.vel_y, 2));
-    var escapeSpeed = Math.sqrt(2 * g_constant * earth_mass / distance);
+    var escapeSpeed = Math.sqrt(2 * g_constant * orbited_object.mass / distance);
 
-    var altitude = distance - earth_radius;
+    var relative_speed = speed - orbited_object.getOrbitalVelocity(); // <==== NOT SURE ABOUT THE SPEED CORRECTION, CAUTION!
+
+    var altitude = distance - orbited_object.radius;
     var escapedv = escapeSpeed - speed;
 
     var speedAlert = (speed >= escapeSpeed) ? "!" : "";
 
-    var circularOrbitVelocity = Math.sqrt(g_constant * earth_mass / distance);
+    var circularOrbitVelocity = Math.sqrt(g_constant * orbited_object.mass / distance);
 
     //Nasty orbital stuff here.
 
-    var theta = -(this.getVelocityVector() - this.getRadialCoordinate());
+    var theta = -(this.getVelocityVector() - angleOfLineBetweenTwoPoints(orbited_object.x, orbited_object.y, this.x, this.y));
 
-    var kinetic_energy = 0.5 * this.mass * pow(speed, 2);
-    var potential_energy = -(standard_gravitational_parameter * this.mass) / distance;
+    var kinetic_energy = 0.5 * this.mass * pow(relative_speed, 2);
+    var potential_energy = -(orbited_object.standard_gravitational_parameter * this.mass) / distance;
 
     var orbit_energy = kinetic_energy + potential_energy;
 
-    var angular_momentum = this.mass * speed * distance * Math.sin(theta);
+    var angular_momentum = this.mass * relative_speed * distance * Math.sin(theta);
 
     var eccentricity = Math.sqrt(Math.abs(1 + (2 * orbit_energy * pow(angular_momentum, 2)) / (pow(this.mass, 3) * pow(standard_gravitational_parameter, 2))));
 
@@ -47,11 +51,6 @@ Body.prototype.drawOrbit = function () {
     }
 
     var intersections = intersection(0, 0, focus * 2, this.pos_x, this.pos_y, l);
-
-    /*
-    drawPoint(intersections[0], intersections[2], 'rgba(255,255,255,1)');
-    drawPoint(intersections[1], intersections[3], 'rgba(255,0,255,1)');
-    */
 
     var first_center = {
         x: intersections[0] / 2,
@@ -119,83 +118,6 @@ Body.prototype.drawOrbit = function () {
         ellipse_angle = option_2;
     }
 
-    if (eccentricity < 1) {
-        /*drawEllipse(-focus * cos(option_2), -focus * sin(option_2), semimajoraxis, semiminoraxis, option_2, 'rgba(0,255,255,1)');*/
-
-        rotoTraslateAxis(-focus, 0, ellipse_angle);
-
-        drawEllipse(0, 0, semimajoraxis, semiminoraxis, 0, 'rgba(0,255,255,1)');
-
-        // Semiaxis Interceptors AKA vertexes
-
-        //drawPoint(semimajoraxis, 0, 'rgba(0,255,0,1)'); // periapsis
-
-        //drawImage(periapsis_img, semimajoraxis, 0);
-
-        //ctx.drawImage();
-
-        drawImageRot(imgs['arrow'], semimajoraxis, -12, 180);
-        drawImageRot(imgs['periapsis_img'], semimajoraxis + 5, -16, -toDeg(ellipse_angle)); //
-
-
-        value = orbitEquation2(0, semimajoraxis, eccentricity);
-
-        //drawPoint(-value -focus, 0, 'rgba(0,255,0,1)');
-
-        //console.log(value);
-
-
-        //drawPoint(-semimajoraxis, 0, 'rgba(0,0,255,12)'); // apoapsis
-
-
-        drawImageRot(imgs['arrow'], -semimajoraxis - 10, -12, 0);
-        drawImageRot(imgs['apoapsis_img'], -semimajoraxis - 37, -16, -toDeg(ellipse_angle)); //
-
-        /*
-        drawPoint(focus, 0, 'rgba(255,255,0,1)');
-        drawPoint(-focus, 0, 'rgba(255,255,0,1)');
-        */
-
-        $('#orbitalPeriod').text(round(orbitalPeriod, 1));
-        $('#periapsis').text(round(periapsis_altitude, 1));
-        $('#apoapsis').text(round(apoapsis_altitude, 1));
-
-    } else {
-        rotoTraslateAxis(0, 0, PI + ellipse_angle);
-
-        /*drawPoint(x2g, y2, 'rgba(0,255,255,1)');*/
-
-        drawImageRot(imgs['arrow'], -semimajoraxis + focus, -12, 180);
-        drawImageRot(imgs['periapsis_img'], -semimajoraxis + focus + 5, -16, toDeg(-ellipse_angle) + 180); //
-
-
-        /*
-        var t = 0;
-        var x2g = hyperbolaTrueAnomaly(semimajoraxis, eccentricity, t) * cos(t);
-        var y2 = hyperbolaTrueAnomaly(semimajoraxis, eccentricity, t) * sin(t);    
-
-
-        var resolution = PI / 50;
-
-        var hypAngle = getRadialCoordinates(semimajoraxis, semiminoraxis);
-
-        for (var t = -hypAngle - PI / 2; t < hypAngle + PI / 2; t += resolution) {
-            var x1 = hyperbolaTrueAnomaly(semimajoraxis, eccentricity, t - resolution) * cos(t - resolution);
-            var y1 = hyperbolaTrueAnomaly(semimajoraxis, eccentricity, t - resolution) * sin(t - resolution);
-
-            var x2 = hyperbolaTrueAnomaly(semimajoraxis, eccentricity, t) * cos(t);
-            var y2 = hyperbolaTrueAnomaly(semimajoraxis, eccentricity, t) * sin(t);
-            if (x1 < x2g)
-                drawLine(x1, y1, x2, y2, 'rgba(0,255,255,1)');
-        }
-        
-        */
-
-        drawHyperbola(semimajoraxis, semiminoraxis, eccentricity, 'rgba(0,255,255,1)');
-    }
-
-    ctx.restore();
-
     // F(r)oci
     /*
     drawPoint(0, semiminoraxis, 'rgba(0,0,255,1)');
@@ -229,23 +151,20 @@ Body.prototype.drawOrbit = function () {
         //ellipse_angle = -getRadialCoordinates(intersections[3], intersections[1]) - PI / 2;
     }
     */
-    try {
-        $('#semimajoraxis').text(round(semimajoraxis, 2));
-        $('#semiminoraxis').text(round(semiminoraxis, 2));
-        $('#eccentricity').text(round(eccentricity, 4));
-        $('#circularOrbitVelocity').text(round(circularOrbitVelocity, 2));
+
+    $('#semimajoraxis').text(semimajoraxis);
+    $('#semiminoraxis').text(semiminoraxis);
+    $('#eccentricity').text(eccentricity);
+    $('#circularOrbitVelocity').text(round(circularOrbitVelocity, 2));
 
 
-        $('#velocityVector').text(toDeg(theta));
-        $('#gforce').text(gforce);
-        $('#acceleration').text(-g);
-        $('#speed').text(speedAlert + speed);
-        $('#verticalSpeed').text(round(-speed * sin(theta - PI / 2), 2));
-        $('#escapeSpeed').text(escapeSpeed);
-        $('#altitude').text(altitude);
-        $('#escapedV').text(escapedv);
-    } catch (err) {}
+    $('#velocityVector').text(round(toDeg(theta), 3));
+    $('#gforce').text(round(gforce, 2));
+    $('#acceleration').text((round(-g, 4)));
+    $('#speed').text(speedAlert + round(speed, 2));
+    $('#verticalSpeed').text(round(-speed * sin(theta - PI / 2), 2));
+    $('#escapeSpeed').text(round(escapeSpeed, 2));
+    $('#altitude').text(round(altitude, 2));
+    $('#escapedV').text(round(escapedv, 2));
 
-    this.drawVelocityVector();
-    this.drawAccelerationVector();
 };

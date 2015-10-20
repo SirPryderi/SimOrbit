@@ -71,6 +71,10 @@ function getGeostationaryOrbit() {
 function placeObject(obj) {
     obj.last_timestamp = Date.now();
     absoluteObjects[obj.index] = obj;
+
+
+    obj.geometry = getPlanetMesh(10e5, star_material);
+
     return obj.index;
 }
 
@@ -151,13 +155,13 @@ function getTrueAnomalyFromEccentricAnomaly(e, E) {
 }
 
 function takeOff(obj) {
-    var x = obj.pos_x;
-    var y = obj.pos_y;
+    var x = obj.x;
+    var y = obj.y;
 
     var pos = moveToAbsoluteCoordinates(x, y, angle);
 
-    obj.pos_x = pos.x;
-    obj.pos_y = pos.y;
+    obj.x = pos.x;
+    obj.y = pos.y;
 
 
     var radial_angle = pos.radialCoordinate - PI / 2;
@@ -181,6 +185,19 @@ function land(obj) {
     removeObject(obj);
 
     placeObjectOnEarth(obj);
+}
+
+function getGForceFromTwoObjects(object1, object2) {
+
+    var distance = distanceFromTwoPoints(object1.x, object1.y, object2.x, object2.y);
+
+    // universal gravitational equation
+    var dg = g_constant * object1.mass * object2.mass / pow(distance, 2);
+    return dg;
+}
+
+function getDistanceFromTwoObjects(one, two) {
+    return distanceFromTwoPoints(one.x, one.y, two.x, two.y);
 }
 
 //Time machine

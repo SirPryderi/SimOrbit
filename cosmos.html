@@ -30,7 +30,95 @@
 <body>
     <section id="first">
         <span id="here"></span>
-        <!--AVIONCS HERE-->
+        <avionics>
+            <orbital>
+                <table>
+                    <tr>
+                        <td>Periapsis</td>
+                        <td id="periapsis"></td>
+                        <td class="unit">m</td>
+                    </tr>
+
+                    <tr>
+                        <td>Apoapsis</td>
+                        <td id="apoapsis"></td>
+                        <td class="unit">m</td>
+                    </tr>
+
+                    <tr>
+                        <td>Eccentricity</td>
+                        <td id="eccentricity"></td>
+                        <td class="unit"></td>
+                    </tr>
+
+
+                    <tr>
+                        <td>Semi-Major Axis</td>
+                        <td id="semimajoraxis"></td>
+                        <td class="unit">m</td>
+                    </tr>
+                    <tr>
+                        <td>Semi-Minor Axis</td>
+                        <td id="semiminoraxis"></td>
+                        <td class="unit">m</td>
+                    </tr>
+
+                    <tr>
+                        <td>Circular Orbit @</td>
+                        <td id="circularOrbitVelocity"></td>
+                        <td class="unit">m/s</td>
+                    </tr>
+
+                    <tr>
+                        <td>Orbital Period</td>
+                        <td id="orbitalPeriod"></td>
+                        <td class="unit">s</td>
+                    </tr>
+                </table>
+            </orbital>
+
+            <table>
+                <tr>
+
+                    <td>GForce</td>
+                    <td id="gforce"></td>
+                    <td class="unit">G</td>
+
+                    <td>Velocity</td>
+                    <td id="speed"></td>
+                    <td class="unit">m/s</td>
+
+                    <td>Vertical Speed</td>
+                    <td id="verticalSpeed"></td>
+                    <td class="unit">m/s</td>
+                </tr>
+                <tr>
+
+                    <td>Acceleration</td>
+                    <td id="acceleration"></td>
+                    <td class="unit">m/s<sup>2</sup></td>
+
+                    <td>Velocity Vector</td>
+                    <td id="velocityVector"></td>
+                    <td class="unit">&deg;</td>
+
+                    <td>Altutide</td>
+                    <td id="altitude"></td>
+                    <td class="unit">m</td>
+                </tr>
+                <tr>
+                    <td>Escape &Delta;V</td>
+                    <td id="escapedV"></td>
+                    <td class="unit">m/s</td>
+
+
+                    <td>Escape Velocity</td>
+                    <td id="escapeSpeed"></td>
+                    <td class="unit">m/s</td>
+                </tr>
+            </table>
+            </br>
+        </avionics>
     </section>
 
     <script src="js/jquery.js"></script>

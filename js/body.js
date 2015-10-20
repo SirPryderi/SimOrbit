@@ -2,9 +2,9 @@ var last_index = -1;
 
 function Body(mass, x, y) {
     this.mass = mass;
-    this.pos_x = x;
-    this.pos_y = y;
-    this.pos_z = 0;
+    this.x = x;
+    this.y = y;
+    this.z = 0;
     this.vel_x = 0;
     this.vel_y = 0;
     this.vel_z = 0;
@@ -13,18 +13,22 @@ function Body(mass, x, y) {
     this.index = ++last_index;
     this.style = 'rgba(100,100,100,1)';
 
+    this.geometry = null;
+
     this.render = function () {
-        drawPoint(this.pos_x, this.pos_y, this.style);
-        //drawImage(pony, this.pos_x, this.pos_y, -this.getVelocityVector());
+        //drawPoint(this.x, this.y, this.style);
+        //drawImage(pony, this.x, this.y, -this.getVelocityVector());
+        //this.geometry.position.x = this.x;
+        //this.geometry.position.z = this.y;
     };
 
     this.setRadialCoordinate = function (radialCoordinate) {
-        this.pos_x = earth_radius * Math.cos(radialCoordinate);
-        this.pos_y = earth_radius * Math.sin(radialCoordinate);
+        this.x = earth_radius * Math.cos(radialCoordinate);
+        this.y = earth_radius * Math.sin(radialCoordinate);
     };
 
     this.getRadialCoordinate = function () {
-        return getRadialCoordinates(this.pos_x, this.pos_y);
+        return getRadialCoordinates(this.x, this.y);
     };
 
     this.getVelocityVector = function () {
@@ -32,20 +36,39 @@ function Body(mass, x, y) {
     };
 
     this.getDistance = function () {
-        //return sqrt(pow(this.pos_x, 2) + pow(this.pos_y, 2));
-        return hypotenuse(this.pos_x, this.pos_y);
+        //return sqrt(pow(this.x, 2) + pow(this.y, 2));
+        return hypotenuse(this.x, this.y);
     };
 
     this.renderPhysics = function () {
-        var distance = this.getDistance();
+        var g; // = -g_constant * earth_mass / Math.pow(distance, 2);
+        var g_x = 0; // = g * Math.cos(this.getRadialCoordinate());
+        var g_y = 0; // = g * Math.sin(this.getRadialCoordinate());
 
-        var g = -g_constant * earth_mass / Math.pow(distance, 2);
+        var minchietta = this;
 
-        var g_x = g * Math.cos(this.getRadialCoordinate());
-        var g_y = g * Math.sin(this.getRadialCoordinate());
+        celestialObjects.forEach(function (obj) {
+
+            var distance = distanceFromTwoPoints(minchietta.x, minchietta.y, obj.x, obj.y);
+
+            // universal gravitational equation
+            var dg = g_constant * obj.mass / pow(distance, 2);
+
+            //minchietta.force = dg * minchietta.mass;
+
+            var angle = angleOfLineBetweenTwoPoints(minchietta.x, minchietta.y, obj.x, obj.y);
+
+            g_x += (dg * cos(angle));
+            g_y += (dg * sin(angle));
+
+
+            //console.log(g_x);
+        });
 
         this.gx = g_x;
         this.gy = g_y;
+
+        this.g = hypotenuse(g_x, g_y);
 
         var timestamp = Date.now(); //Getting time
         var dT = (timestamp - this.last_timestamp) / 1000;
@@ -55,30 +78,33 @@ function Body(mass, x, y) {
             this.vel_x += g_x * dT;
             this.vel_y += g_y * dT;
             //Calculating velocities
-            this.pos_x += this.vel_x * dT;
-            this.pos_y += this.vel_y * dT;
-            //Updating timestamp
-        }
+            this.x += this.vel_x * dT;
+            this.y += this.vel_y * dT;
 
+        }
+        //Updating timestamp
         this.last_timestamp = timestamp;
 
-        if (distance < earth_radius) { // Collision Detection
-            land(this);
-        }
+        this.geometry.position.x = this.x;
+        this.geometry.position.z = this.y;
+
+        //if (distance < earth_radius) { // Collision Detection
+        //land(this);
+        //}
     };
 
     this.drawVelocityVector = function () {
         ctx.beginPath();
-        ctx.moveTo(this.pos_x, this.pos_y);
-        ctx.lineTo(this.pos_x + this.vel_x * 2, this.pos_y + this.vel_y * 2);
+        ctx.moveTo(this.x, this.y);
+        ctx.lineTo(this.x + this.vel_x * 2, this.y + this.vel_y * 2);
         ctx.strokeStyle = 'rgba(0,255,0,1)';
         ctx.stroke();
     };
 
     this.drawAccelerationVector = function () {
         ctx.beginPath();
-        ctx.moveTo(this.pos_x, this.pos_y);
-        ctx.lineTo(this.pos_x + this.gx * 2E1, this.pos_y + this.gy * 2E1);
+        ctx.moveTo(this.x, this.y);
+        ctx.lineTo(this.x + this.gx * 2E1, this.y + this.gy * 2E1);
         ctx.strokeStyle = 'rgba(0,0,255,1)';
         ctx.stroke();
     };
@@ -95,7 +121,7 @@ function Body(mass, x, y) {
     };
 
     this.SpaceObjectTracking = function () {
-        drawLine(0, 0, this.pos_x, this.pos_y, 'rgb(255,255,0)');
+        drawLine(0, 0, this.x, this.y, 'rgb(255,255,0)');
     };
 
     this.focus = function () {
@@ -108,4 +134,29 @@ function Body(mass, x, y) {
         this.focused = true;
         focusedIndex = this.index;
     };
+
+    this.gStat = function () {
+        var g; // = -g_constant * earth_mass / Math.pow(distance, 2);
+        var g_x = 0; // = g * Math.cos(this.getRadialCoordinate());
+        var g_y = 0; // = g * Math.sin(this.getRadialCoordinate());
+
+        var minchietta = this;
+
+        celestialObjects.forEach(function (obj) {
+
+            var distance = distanceFromTwoPoints(minchietta.x, minchietta.y, obj.x, obj.y);
+
+            // universal gravitational equation
+            var dg = g_constant * obj.mass / pow(distance, 2);
+
+            //minchietta.force = dg * minchietta.mass;
+
+            var angle = angleOfLineBetweenTwoPoints(minchietta.x, minchietta.y, obj.x, obj.y);
+
+            console.log(obj.planet_type, distance / 1000, "km", dg, "m/s²");
+            //console.log(g_x);
+        });
+        console.log("==============");
+
+    }
 }

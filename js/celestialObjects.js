@@ -1,3 +1,5 @@
+var celestialObjects = [];
+
 /* CELSTIAL OBJECTS */
 var planet_material = new THREE.MeshPhongMaterial({
     color: 0xdddddd,
@@ -133,6 +135,8 @@ function Celestial_object(mass, radius, semimajoraxis, eccentricity) {
 
             body.meshes.push(ellipse);
         }
+
+        celestialObjects.push(body);
 
         this.childrenObjects.push(body);
     };

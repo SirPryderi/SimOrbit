@@ -138,11 +138,11 @@ function periodicReduction(value, period) {
     return value % period;
 }
 
-function distanceFromTowPoints(x1, y1, x2, y2) {
+function distanceFromTwoPoints(x1, y1, x2, y2) {
     return sqrt(pow(x2 - x1, 2) + (y2 - y1, 2));
 }
 
-Math.atanh = Math.atanh || function(x) {
+Math.atanh = Math.atanh || function (x) {
     return Math.log((1 + x) / (1 - x)) / 2;
 };
 

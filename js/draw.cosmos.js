@@ -13,8 +13,9 @@ function init2() {
     SOPS.vertices.push(gas_giant.geometry.position);
     
     line = new THREE.Line(SOPS, material);
-*/
-    addLensFlare(0, 0, 0, 5, textureFlare1);
+    */
+
+    //addLensFlare(0, 0, 0, 5, textureFlare1);
 
     //camera.up = new THREE.Vector3(0, 0, 1);
 
@@ -34,12 +35,16 @@ function init2() {
     //moon.geometry.material = moonMat;
 
 
+    root.render(); // This will render the root object (sun or center of the galaxy);
 
+    root.renderChildren(); // This will rendere root children. Warning,  recursion inside!
 
     //////////////////////////
 
+    scene.add(particle.geometry);
 
-    focusObject(moon);
+
+    focusObject(earth);
 
     addObjectsToScene(root);
 
@@ -62,9 +67,11 @@ function animate() {
 
 
 function render() {
-    root.render(); // This will render the root object (sun or center of the galaxy);
 
-    root.renderChildren(); // This will rendere root children. Warning,  recursion inside!
+
+    particle.renderPhysics();
+
+    particle.drawOrbit();
 
     /*
     line.geometry.vertices[1].x = moon.x;
