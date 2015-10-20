@@ -4,8 +4,10 @@ function Body(mass, x, y) {
     this.mass = mass;
     this.pos_x = x;
     this.pos_y = y;
+    this.pos_z = 0;
     this.vel_x = 0;
     this.vel_y = 0;
+    this.vel_z = 0;
     this.last_timestamp = 0;
     this.focused = false;
     this.index = ++last_index;

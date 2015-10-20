@@ -4,7 +4,7 @@ var star = new Star(1.98855E30, 6.955E8, 1E10, .8, 5778);
 
 var earth = new Planet(5.9736E24, 6.371E6, 1.49598261E11, 0.01671123, 1, "terra");
 
-var moon = new Planet(7.3477E22, 1.73710E6, 3.84399e8, 0.0549, 1, "");
+var moon = new Planet(7.3477E22, 1.73710E6, 3.84399e8, 0.549, 1, "");
 
 //var earth = new Planet(1, 0.5, 10, 0.901671123, 1, "terra");
 
@@ -33,11 +33,11 @@ earth.addChild(moon);
 
 //planetoid.addChild(planet2);
 
-var time_warp = 1; //5E5;
+var time_warp = 5e2; //5E5;
 
 zoom_level = 1.3081952214077505e-9;
 
-var time = 60 * 60 * 24 * 365.25;
+//var time = 60 * 60 * 24 * 365.25;
 
 $(document).ready(function () {
     init2();

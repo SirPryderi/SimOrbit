@@ -8,7 +8,7 @@
 /*global THREE, console */
 
 function focusObject(object) {
-    controls.minDistance = object.radius + 20;
+    controls.minDistance = object.radius + 2000000;
     //controls.constraint.rotateUp(-PI / 4);
     object.geometry.add(camera);
 }
