@@ -152,9 +152,9 @@ Body.prototype.drawOrbit = function () {
     }
     */
 
-    $('#semimajoraxis').text(semimajoraxis);
-    $('#semiminoraxis').text(semiminoraxis);
-    $('#eccentricity').text(eccentricity);
+    $('#semimajoraxis').text(round(semimajoraxis, 2));
+    $('#semiminoraxis').text(round(semiminoraxis, 2));
+    $('#eccentricity').text(round(eccentricity, 2));
     $('#circularOrbitVelocity').text(round(circularOrbitVelocity, 2));
 
 

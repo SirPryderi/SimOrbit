@@ -12,6 +12,7 @@ function Body(mass, x, y) {
     this.focused = false;
     this.index = ++last_index;
     this.style = 'rgba(100,100,100,1)';
+    this.orbitedBody = null;
 
     this.geometry = null;
 
@@ -41,43 +42,46 @@ function Body(mass, x, y) {
     };
 
     this.renderPhysics = function () {
-        var g; // = -g_constant * earth_mass / Math.pow(distance, 2);
-        var g_x = 0; // = g * Math.cos(this.getRadialCoordinate());
+        var g; // = -g_constant * earth_mass / Math.pow(distance, 2); // Total G module, calculated later.
+        var g_x = 0; // = g * Math.cos(this.getRadialCoordinate()); // I bet you can guess that.
         var g_y = 0; // = g * Math.sin(this.getRadialCoordinate());
 
-        var minchietta = this;
+        var minchietta = this; // ignore le scurrilitá, a quanto pare facend quella cosa brutta risolve problemi.
 
-        celestialObjects.forEach(function (obj) {
+        celestialObjects.forEach(function (obj) { // This will cycle through an array containing all "planets and stars"
 
-            var distance = distanceFromTwoPoints(minchietta.x, minchietta.y, obj.x, obj.y);
+            var distance = distanceFromTwoPoints(minchietta.x, minchietta.y, obj.x, obj.y); // This will calculate the distance between the current particle and the selected space object
 
-            // universal gravitational equation
-            var dg = g_constant * obj.mass / pow(distance, 2);
+            if (distance < obj.soi) { // This will just return the object that is orbited, used to draw the orbit
+                minchietta.orbitedBody = obj;
+            }
 
-            //minchietta.force = dg * minchietta.mass;
+            // universal gravitational equation, kinda.
+            var dg = g_constant * obj.mass / pow(distance, 2); // this will get the G module
 
-            var angle = angleOfLineBetweenTwoPoints(minchietta.x, minchietta.y, obj.x, obj.y);
+            var angle = angleOfLineBetweenTwoPoints(minchietta.x, minchietta.y, obj.x, obj.y); // This should return the angle between the particle and the space object
 
-            g_x += (dg * cos(angle));
+            g_x += (dg * cos(angle)); // x and y components of the acceleration are calculated, and added to the global one to get the total g
             g_y += (dg * sin(angle));
 
 
             //console.log(g_x);
         });
 
-        this.gx = g_x;
-        this.gy = g_y;
+        console.log('Hey, I\'m in ' + minchietta.orbitedBody.planet_type + " sphere of influence!");
 
+        this.gx = g_x; // storing values in the object for later use.
+        this.gy = g_y;
         this.g = hypotenuse(g_x, g_y);
 
-        var timestamp = Date.now(); //Getting time
-        var dT = (timestamp - this.last_timestamp) / 1000;
+        var timestamp = window.performance.now() * 90; //Date.now(); //Getting time in millisecond
+        var dT = (timestamp - this.last_timestamp) / 1000; // Gettint the time difference in SECONDS
 
-        if (dT < 0.5) { //This will prevent hight dT values when the windows lose focus.
-            //Calculating accelerations
+        if (dT < 9000000.5) { //This will prevent hight dT values when the windows lose focus.
+            //Calculating velocities
             this.vel_x += g_x * dT;
             this.vel_y += g_y * dT;
-            //Calculating velocities
+            //Updating particle position
             this.x += this.vel_x * dT;
             this.y += this.vel_y * dT;
 
@@ -85,6 +89,7 @@ function Body(mass, x, y) {
         //Updating timestamp
         this.last_timestamp = timestamp;
 
+        //Updating mesh position
         this.geometry.position.x = this.x;
         this.geometry.position.z = this.y;
 

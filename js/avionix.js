@@ -51,7 +51,7 @@ function toggleSOPS() {
 
 var ellipse_angle = 0;
 
-var keyImpulse = 500e6;
+var keyImpulse = 1e5;
 $(document).keydown(function (e) {
     switch (e.which) {
         case 37: // left
@@ -96,9 +96,9 @@ $(document).keydown(function (e) {
             toggleFVV();
             break;
         case 82: //r
-            particle.x = earth.x + 5e7;
+            particle.x = earth.x + 1e7;
             particle.y = earth.y;
-            //particle.vel_x = earth.getOrbitalVelocity;
+            particle.vel_y = 7e3;
             break;
         case 69: //e
             toggleSOPS();

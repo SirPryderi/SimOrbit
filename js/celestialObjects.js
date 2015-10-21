@@ -46,10 +46,9 @@ function Celestial_object(mass, radius, semimajoraxis, eccentricity) {
     this.angularVelocity = 1;
     this.orbitalPeriod = null;
     this.meanMotion = null;
+    this.trueAnomaly = 0;
+    this.eccentricAnomaly = 0;
     this.soi = Infinity; // sphere of influence, it will be calculated when an object is set as another's children.
-
-    console.log(this);
-
 
     //Renderer
 
@@ -88,9 +87,12 @@ function Celestial_object(mass, radius, semimajoraxis, eccentricity) {
 
             var trueAnomaly = getTrueAnomalyFromEccentricAnomaly(obj.eccentricity, eccentricAnomaly);
 
+
             var radius = obj.semimajoraxis * (1 - obj.eccentricity * cos(eccentricAnomaly));
 
             obj.orbitalRadius = radius;
+            obj.trueAnomaly = trueAnomaly;
+            obj.eccentricAnomaly = eccentricAnomaly;
 
             obj.x = obj.parentObject.x - obj.semimajoraxis * (cos(eccentricAnomaly) - obj.eccentricity); //radius * cos(trueAnomaly + obj.argumentPeriapsis);
             obj.y = obj.parentObject.y - obj.semiminoraxis * sin(eccentricAnomaly); //radius * sin(trueAnomaly + obj.argumentPeriapsis);
@@ -157,6 +159,23 @@ function Celestial_object(mass, radius, semimajoraxis, eccentricity) {
 
     this.getOrbitalVelocity = function () {
         return sqrt(this.parentObject.standard_gravitational_parameter * ((2 / this.orbitalRadius) - (1 / this.semimajoraxis)));
+    };
+
+    this.getOrbitalVelocityVector = function () {
+        //var velocity = sqrt(this.parentObject.standard_gravitational_parameter * ((2 / this.orbitalRadius) - (1 / this.semimajoraxis)));
+        var velocity = {
+            x: this.semimajoraxis * -sin(this.eccentricAnomaly),
+            y: this.semimajoraxis * cos(this.eccentricAnomaly),
+            z: 0
+        }
+
+        console.log(hypotenuse(velocity.x, velocity.y));
+
+        console.log(this.getOrbitalVelocity());
+
+        return velocity;
+
+
     };
 
 }

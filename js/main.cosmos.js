@@ -1,5 +1,7 @@
 var root = new Star(1.98855E30, 6.955E8, 0, 0, 5778);
 
+celestialObjects.push(root);
+
 var star = new Star(1.98855E30, 6.955E8, 1E10, .8, 5778);
 
 var earth = new Planet(5.9736E24, 6.371E6, 1.49598261E11, 0.01671123, 1, "Terra");
@@ -41,7 +43,7 @@ particle.focus();
 
 console.log(particle);
 
-celestialObjects.push(root);
+
 
 
 //planetoid.addChild(planet2);
