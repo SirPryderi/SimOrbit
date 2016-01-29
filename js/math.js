@@ -5,8 +5,20 @@ function toDeg(rad) {
     return 180 * rad / Math.PI;
 }
 
+function toRad(deg) {
+    return PI * deg / 180;
+}
+
 function pow(x, y) {
     return Math.pow(x, y);
+}
+
+function square(x) {
+    return Math.pow(x, 2);
+}
+
+function cube(x) {
+    return Math.pow(x, 3);
 }
 
 function sin(x) {
@@ -91,6 +103,10 @@ function angleOfLineBetweenTwoPoints(x1, y1, x2, y2) {
 
 }
 
+function angleOfLineBetweenTwoObjects(one, two) {
+    return angleOfLineBetweenTwoPoints(one.x, one.y, two.x, two.y);
+}
+
 function nthroot(x, n) {
     try {
         var negate = n % 2 == 1 && x < 0;
@@ -100,7 +116,9 @@ function nthroot(x, n) {
         n = Math.pow(possible, n);
         if (Math.abs(x - n) < 1 && (x > 0 == n > 0))
             return negate ? -possible : possible;
-    } catch (e) {}
+    } catch (e) {
+        console.log("something went wrong.");
+    }
 }
 
 function smallest_angle(a, b) {
@@ -139,7 +157,7 @@ function periodicReduction(value, period) {
 }
 
 function distanceFromTwoPoints(x1, y1, x2, y2) {
-    return sqrt(pow(x2 - x1, 2) + (y2 - y1, 2));
+    return sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2));
 }
 
 Math.atanh = Math.atanh || function (x) {
@@ -163,4 +181,22 @@ function round(num, places) {
 
 function randomIntFromInterval(min, max) {
     return Math.floor(Math.random() * (max - min + 1) + min);
+}
+
+// VECTORIAL OPERATIONS 
+
+function sumVector(a, b) {
+    return {
+        x: (a.x + b.x),
+        y: (a.y + b.y),
+        z: (a.z + b.z)
+    };
+}
+
+function subtractVector(a, b) {
+    return {
+        x: (a.x - b.x),
+        y: (a.y - b.y),
+        z: (a.z - b.z)
+    };
 }

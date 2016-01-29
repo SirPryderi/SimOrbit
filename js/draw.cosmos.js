@@ -3,7 +3,7 @@ var camera, controls, scene, renderer;
 function init2() {
     setUpRenderer();
 
-    setUpTexture();
+    //setUpTexture();
 
     //  controls.target = (earth.geometry.position);
 
@@ -22,18 +22,11 @@ function init2() {
     //var light = new THREE.AmbientLight(0x404040); // soft white light
     //scene.add(light);
 
-
     var light = new THREE.PointLight(0xffcccc, 4, 0);
     light.position.set(0, 0, 0);
     scene.add(light);
 
-
-    var moonMat = new THREE.MeshPhongMaterial({
-        map: moonTexture
-    });
-
     //moon.geometry.material = moonMat;
-
 
     root.render(); // This will render the root object (sun or center of the galaxy);
 
@@ -42,7 +35,6 @@ function init2() {
     //////////////////////////
 
     scene.add(particle.geometry);
-
 
     focusObject(earth);
 
@@ -65,19 +57,20 @@ function animate() {
     render();
 }
 
-
 function render() {
-
-
     particle.renderPhysics();
 
     particle.drawOrbit();
+
+    root.renderChildren();
 
     /*
     line.geometry.vertices[1].x = moon.x;
     line.geometry.vertices[1].z = moon.y;
     line.geometry.verticesNeedUpdate = true;
     */
+
+    //console.log(earth.getOrbitalVelocity() + "\t", hypotenuse(earth.velocity.y, earth.velocity.y));
 
     renderer.render(scene, camera);
 };
@@ -92,7 +85,6 @@ function addObjectsToScene(obj) {
     obj.childrenObjects.forEach(function (objj) {
         addObjectsToScene(objj);
     });
-
 }
 
 function setUpRenderer() {

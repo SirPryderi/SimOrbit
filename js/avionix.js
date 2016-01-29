@@ -109,7 +109,12 @@ $(document).keydown(function (e) {
         case 107: //+
             zoom_level = zoom_level / 2;
             break;
-
+        case 187: // =
+            time_warp += 10;
+            break;
+        case 189: // -
+            time_warp -= 10;
+            break;
         case 109: //-
             zoom_level = zoom_level * 2;
             break;

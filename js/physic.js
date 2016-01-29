@@ -5,6 +5,8 @@ var earth_radius = 234; // RADIUS OF THE EARTH
 var earth_mass = 18E14; //18E14; // MASS OF THE EARTH 18E
 var real_earth_radius = 6.371E6;
 
+var light_speed = 2.99792458E8; // m/s
+
 var earth_rotation_period = 180;
 var earth_angular_velocity = -((2 * Math.PI) / earth_rotation_period); // ω // EARTH ANGULAR VELOCITY
 var g_constant = 6.67408E-11; // * pow(earth_radius/real_earth_radius, 3); // UNIVERSAL GRAVITATIONAL CONSTANT
@@ -188,7 +190,6 @@ function land(obj) {
 }
 
 function getGForceFromTwoObjects(object1, object2) {
-
     var distance = distanceFromTwoPoints(object1.x, object1.y, object2.x, object2.y);
 
     // universal gravitational equation

@@ -4,7 +4,7 @@ celestialObjects.push(root);
 
 var star = new Star(1.98855E30, 6.955E8, 1E10, .8, 5778);
 
-var earth = new Planet(5.9736E24, 6.371E6, 1.49598261E11, 0.01671123, 1, "Terra");
+var earth = new Planet(5.9736E27, 6.371E6, 1.49598261E11, 0.01671123, 1, "Terra"); //E24
 
 var moon = new Planet(7.3477E22, 1.73710E6, 3.84399e8, 0.0549, 1, "Moon");
 
@@ -25,7 +25,7 @@ var mercury = new Planet(3.3022E23, 2.4397E6, 5.7909050E10, 0.205630, 1, "Mercur
 
 root.addChild(earth);
 
-root.planet_type = "Sun;"
+root.planet_type = "Sun";
 
 //root.addChild(star);
 
@@ -35,16 +35,13 @@ root.addChild(mercury);
 
 earth.addChild(moon);
 
-particle = new Body(5000, 5e15, 5e15);
+particle = new Body(5000, 7e12, 7e12);
 
 placeObject(particle);
 
 particle.focus();
 
 console.log(particle);
-
-
-
 
 //planetoid.addChild(planet2);
 

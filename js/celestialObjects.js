@@ -60,6 +60,15 @@ function Celestial_object(mass, radius, semimajoraxis, eccentricity) {
     this.geometry = sphere; // this is the main mesh of the object
     this.meshes = []; // Here should be contained all kind of children meshes
 
+    //THIS HAS TO BE DELETED ONCE THE VELOCITY CALCULATION IS PROPERLY IMPLEMENTED
+    this.last_timestamp = 0;
+
+    this.velocity = {
+        x: 0,
+        y: 0,
+        z: 0
+    }
+
     this.calcOrbitalPeriod = function () {
         this.orbitalPeriod = 2 * PI * sqrt(pow(this.semimajoraxis, 3) / this.parentObject.standard_gravitational_parameter);
     };
@@ -83,7 +92,7 @@ function Celestial_object(mass, radius, semimajoraxis, eccentricity) {
 
             var meanAnomaly = obj.meanMotion * dT;
 
-            var eccentricAnomaly = getEccentricAnomalyNewtonMethod(obj.eccentricity, meanAnomaly, 5);
+            var eccentricAnomaly = getEccentricAnomalyNewtonMethod(obj.eccentricity, meanAnomaly, 10);
 
             var trueAnomaly = getTrueAnomalyFromEccentricAnomaly(obj.eccentricity, eccentricAnomaly);
 
@@ -94,13 +103,29 @@ function Celestial_object(mass, radius, semimajoraxis, eccentricity) {
             obj.trueAnomaly = trueAnomaly;
             obj.eccentricAnomaly = eccentricAnomaly;
 
-            obj.x = obj.parentObject.x - obj.semimajoraxis * (cos(eccentricAnomaly) - obj.eccentricity); //radius * cos(trueAnomaly + obj.argumentPeriapsis);
-            obj.y = obj.parentObject.y - obj.semiminoraxis * sin(eccentricAnomaly); //radius * sin(trueAnomaly + obj.argumentPeriapsis);
+            var newx = obj.parentObject.x - obj.semimajoraxis * (cos(eccentricAnomaly) - obj.eccentricity); //radius * cos(trueAnomaly + obj.argumentPeriapsis);
+            var newy = obj.parentObject.y - obj.semiminoraxis * sin(eccentricAnomaly); //radius * sin(trueAnomaly + obj.argumentPeriapsis);
+
+            var ddT = dT - obj.last_timestamp;
+
+            // TEMP VELOCITY CALCULATION
+            var dx = newx - obj.x;
+            var dy = newy - obj.y;
+
+
+            obj.velocity.x = (dx) / ddT;
+            obj.velocity.y = (dy) / ddT;
+
+            obj.last_timestamp = dT;
+
+            obj.x = newx;
+            obj.y = newy;
 
             //update mesh
             obj.geometry.position.x = obj.x;
             obj.geometry.position.y = 0;
             obj.geometry.position.z = obj.y;
+            //
 
             obj.renderChildren();
         });
@@ -114,7 +139,7 @@ function Celestial_object(mass, radius, semimajoraxis, eccentricity) {
         body.calcOrbitalPeriod();
         //finally add the object into the parent's children list
 
-        { // Adding ellipse
+        { // Adding ellipse orbit
             var curve = new THREE.EllipseCurve(
                 //asd
                 body.focus - this.x, -this.y, // ax, aY
@@ -125,6 +150,7 @@ function Celestial_object(mass, radius, semimajoraxis, eccentricity) {
             );
 
             var path = new THREE.Path(curve.getPoints(2000));
+
             var geometry = path.createPointsGeometry(2000);
             var material = new THREE.LineBasicMaterial({
                 color: 0xff0000
@@ -132,6 +158,10 @@ function Celestial_object(mass, radius, semimajoraxis, eccentricity) {
 
             // Create the final Object3d to add to the scene
             var ellipse = new THREE.Line(geometry, material);
+
+            ellipse.geometry.dynamic = true;
+
+            ellipse.geometry.verticesNeedUpdate = true;
 
             ellipse.rotation.x = Math.PI / 2;
 
@@ -158,24 +188,64 @@ function Celestial_object(mass, radius, semimajoraxis, eccentricity) {
     };
 
     this.getOrbitalVelocity = function () {
-        return sqrt(this.parentObject.standard_gravitational_parameter * ((2 / this.orbitalRadius) - (1 / this.semimajoraxis)));
+        if (this.parentObject) {
+            return sqrt(this.parentObject.standard_gravitational_parameter * ((2 / this.orbitalRadius) - (1 / this.semimajoraxis)));
+        } else {
+            return 0;
+        }
     };
 
-    this.getOrbitalVelocityVector = function () {
-        //var velocity = sqrt(this.parentObject.standard_gravitational_parameter * ((2 / this.orbitalRadius) - (1 / this.semimajoraxis)));
-        var velocity = {
-            x: this.semimajoraxis * -sin(this.eccentricAnomaly),
-            y: this.semimajoraxis * cos(this.eccentricAnomaly),
-            z: 0
+    this.getOrbitalVelocityAngle = function () {
+        // equazione ellisse a x^2 + b y^2 = r
+        // punto del corpo orbitante (c,v)
+        // equzione retta velocitá tangente = ca x + vb y = r
+
+        // y = - ca / vb x
+
+        // m*x + n = y 
+
+        // m = -ca / vb
+
+        // m = tan(angle)
+
+        // angle = arctan(m)
+
+        // angle = arctan(-ca / vb)
+
+        if (this.parentObject == null) {
+            return 0;
         }
 
-        console.log(hypotenuse(velocity.x, velocity.y));
+        var r = getDistanceFromTwoObjects(this, this.parentObject); // Radius / Distance of the body
 
-        console.log(this.getOrbitalVelocity());
+        var k = square(this.semimajoraxis); //
+        var l = square(this.semiminoraxis); //
 
-        return velocity;
+        var c = k; // * r;
 
+        var d = l; // * r;
 
+        //var m = -(c * this.x) / (d * this.y); // Grandient of the tangent line
+
+        return Math.atan2((c * this.x), -(d * this.y));
+    }
+
+    this.getOrbitalVelocityVector = function () {
+        var velocity = this.getOrbitalVelocity();
+        if (velocity == 0) {
+            return {
+                x: 0,
+                y: 0,
+                z: 0
+            };
+        }
+        var angle = this.getOrbitalVelocityAngle();
+
+        return {
+            x: velocity * cos(angle),
+            y: velocity * sin(angle),
+            z: 0
+        };
     };
 
 }

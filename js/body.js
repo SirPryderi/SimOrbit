@@ -14,6 +14,8 @@ function Body(mass, x, y) {
     this.style = 'rgba(100,100,100,1)';
     this.orbitedBody = null;
 
+    this.orbitMesh;
+
     this.geometry = null;
 
     this.render = function () {
@@ -32,9 +34,17 @@ function Body(mass, x, y) {
         return getRadialCoordinates(this.x, this.y);
     };
 
-    this.getVelocityVector = function () {
-        return Math.atan2(this.vel_y, this.vel_x);
+    this.getVelocityVectorAngle = function () {
+        return Math.atan2(this.vel_y, this.vel_x) - PI / 2;
     };
+
+    this.getVelocityVector = function () {
+        return {
+            x: this.vel_x,
+            y: this.vel_y,
+            z: this.vel_z
+        }
+    }
 
     this.getDistance = function () {
         //return sqrt(pow(this.x, 2) + pow(this.y, 2));
@@ -46,35 +56,49 @@ function Body(mass, x, y) {
         var g_x = 0; // = g * Math.cos(this.getRadialCoordinate()); // I bet you can guess that.
         var g_y = 0; // = g * Math.sin(this.getRadialCoordinate());
 
-        var minchietta = this; // ignore le scurrilitá, a quanto pare facend quella cosa brutta risolve problemi.
+        var thisObj = this; // ignore le scurrilitá, a quanto pare facendo quella cosa brutta risolve problemi.
+
+        //var obj = earth;
+
+        //console.log('======');
 
         celestialObjects.forEach(function (obj) { // This will cycle through an array containing all "planets and stars"
 
-            var distance = distanceFromTwoPoints(minchietta.x, minchietta.y, obj.x, obj.y); // This will calculate the distance between the current particle and the selected space object
+            var distance = getDistanceFromTwoObjects(thisObj, obj); // This will calculate the distance between the current particle and the selected space object
 
             if (distance < obj.soi) { // This will just return the object that is orbited, used to draw the orbit
-                minchietta.orbitedBody = obj;
+                thisObj.orbitedBody = obj; // mmmmh. zzzzzz.
             }
 
             // universal gravitational equation, kinda.
             var dg = g_constant * obj.mass / pow(distance, 2); // this will get the G module
 
-            var angle = angleOfLineBetweenTwoPoints(minchietta.x, minchietta.y, obj.x, obj.y); // This should return the angle between the particle and the space object
 
-            g_x += (dg * cos(angle)); // x and y components of the acceleration are calculated, and added to the global one to get the total g
+            var angle = angleOfLineBetweenTwoObjects(obj, thisObj); // This should return the angle between the particle and the space object
+
+            g_x -= (dg * cos(angle)); // x and y components of the acceleration are calculated, and added to the global one to get the total g
             g_y += (dg * sin(angle));
 
-
-            //console.log(g_x);
+            //            if (obj.planet_type == 'Terra') {
+            //                console.log(obj.planet_type);
+            //                console.log("dg: \t", dg);
+            //                console.log("dist:\t", distance);
+            //                console.log("ang:\t", toDeg(angle));
+            //            }
         });
 
-        console.log('Hey, I\'m in ' + minchietta.orbitedBody.planet_type + " sphere of influence!");
 
         this.gx = g_x; // storing values in the object for later use.
         this.gy = g_y;
         this.g = hypotenuse(g_x, g_y);
 
-        var timestamp = window.performance.now() * 90; //Date.now(); //Getting time in millisecond
+        //        console.log(g_x);
+        //        console.log(g_y);
+        //        console.log(this.g);
+        //
+        //        console.log('======');
+
+        var timestamp = window.performance.now() * time_warp; //Date.now(); //Getting time in millisecond
         var dT = (timestamp - this.last_timestamp) / 1000; // Gettint the time difference in SECONDS
 
         if (dT < 9000000.5) { //This will prevent hight dT values when the windows lose focus.
@@ -84,8 +108,8 @@ function Body(mass, x, y) {
             //Updating particle position
             this.x += this.vel_x * dT;
             this.y += this.vel_y * dT;
-
         }
+
         //Updating timestamp
         this.last_timestamp = timestamp;
 
@@ -145,18 +169,18 @@ function Body(mass, x, y) {
         var g_x = 0; // = g * Math.cos(this.getRadialCoordinate());
         var g_y = 0; // = g * Math.sin(this.getRadialCoordinate());
 
-        var minchietta = this;
+        var thisObj = this;
 
         celestialObjects.forEach(function (obj) {
 
-            var distance = distanceFromTwoPoints(minchietta.x, minchietta.y, obj.x, obj.y);
+            var distance = distanceFromTwoPoints(thisObj.x, thisObj.y, obj.x, obj.y);
 
             // universal gravitational equation
             var dg = g_constant * obj.mass / pow(distance, 2);
 
-            //minchietta.force = dg * minchietta.mass;
+            //thisObj.force = dg * thisObj.mass;
 
-            var angle = angleOfLineBetweenTwoPoints(minchietta.x, minchietta.y, obj.x, obj.y);
+            var angle = angleOfLineBetweenTwoPoints(thisObj.x, thisObj.y, obj.x, obj.y);
 
             console.log(obj.planet_type, distance / 1000, "km", dg, "m/s²");
             //console.log(g_x);
