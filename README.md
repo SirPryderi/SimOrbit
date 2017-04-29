@@ -1,5 +1,5 @@
 # space.fwd
-###*A javascript based space physics simulation.*
+### *A javascript based space physics simulation.*
 
 Hello! This project aims to create a space physics simulation running in your browser.
 More likely it will just cause some lags, but that's the best part of an alpha project, isn't it?
