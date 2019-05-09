@@ -9,7 +9,7 @@ Right now there are two main pages:
 
 # Live previews
 
-* [Click here](http://htmlpreview.github.io/?https://github.com/SirPryderi/space.fwd/blob/master/index.html) for a live preview of the current development state. Enjoy!
+* [Click here](http://sirpryderi.github.io/space.fwd/) for a live preview of the current development state. Enjoy!
 * [Very Early 3D preview](http://goo.gl/O3JNNF) you may need a towel to go further
 
 # Controls
