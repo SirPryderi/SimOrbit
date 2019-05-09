@@ -1,4 +1,4 @@
-# space.fwd
+# SimOrbit
 ### *A javascript based space physics simulation.*
 
 Hello! This project aims to create a space physics simulation running in your browser.
@@ -7,10 +7,9 @@ Right now there are two main pages:
 * index, that will allow you to drive a little red particle in the void of space.
 * cosmos, that feature multiplanetary simulation. The two will be eventually merged so that you can move from one planet to another.
 
-# Live previews
+# Live preview
 
-* [Click here](http://sirpryderi.github.io/space.fwd/) for a live preview of the current development state. Enjoy!
-* [Very Early 3D preview](http://goo.gl/O3JNNF) you may need a towel to go further
+* [Click here](http://sirpryderi.github.io/SimOrbit/) for a live preview of the current development state. Enjoy!
 
 # Controls
 You can take off that red particle using ```[spacebar]```. Use the arrows to apply impulses and alter the particle trajectory.
